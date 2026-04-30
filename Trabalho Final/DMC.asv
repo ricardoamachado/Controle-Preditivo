@@ -6,22 +6,21 @@ step(sys_disc)
 Ts = sys_disc.Ts;
 N_predicao = 10;
 N_truncamento = 150;
-N_controle = 8;
 N_amostras = N_predicao + N_truncamento;
 [g_vetor, t_vetor] = step(sys_disc, 0:Ts:N_amostras*Ts);
 % Corta o elemento associado com k = 0.
 g_vetor(1) = [];
 t_vetor(1) = [];
 G = g_vetor;
+N_controle = 8;
 
-% Monta a matriz da resposta forçada G.
+% Monta a matriz 
 for i=1:N_controle-1
     %Desloca o g_vetor i unidades e preenche início com zeros.
     g_vetor_i = circshift(g_vetor,i);
     g_vetor_i(1:i) = 0;
     G = cat(2,G,g_vetor_i);
 end
-% Dimensão de G  = N * Nu
 G = G(1:N_predicao,1:N_controle);
 
 Gf = [];
