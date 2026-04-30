@@ -26,7 +26,7 @@ B_ss = [Vo/(n*Lm) + Vs/Lm; -Ilm/(n*C)];
 C_ss = [0 1];
 sys = ss(A_ss,B_ss,C_ss,0);
 T_sample = 2/freq; % Ajustar posteriormente.
-sys_disc = c2d(sys,T_sample);
+sys_disc = c2d(sys,T_sample,'zoh');
 figure(1)
 bode(sys)
 
