@@ -6,11 +6,12 @@ B = sys_disc.B;
 C = sys_disc.C;
 D = sys_disc.D;
 T_sample = sys_disc.Ts;
+N_estados = size(A,1);
 
 [B_poly, A_poly] = ss2tf(A,B,C,sys_disc.D);
 sys_tf = tf(B_poly,A_poly,sys_disc.Ts,'Variable', 'z^-1');
-N_predicao = 10;
-N_controle = 8;
+N_predicao = 50;
+N_controle = 50;
 
 % Função de transf. na forma (z^-1)*(B(z^-1))/(A(z^-1))
 B_poly = B_poly(2:end); % Retira o z^-1.
@@ -50,4 +51,117 @@ for i=1:N_controle-1
     G = cat(2,G,g_vetor_i);
 end
 
-disp(M);
+%% Matrizes de ponderação.
+Q = 1;
+R = 200000;
+Q_pred = Q * eye(N_predicao);
+R_pred = R * eye(N_controle);
+H_qp = 2*(R_pred + G'*Q_pred*G);
+H_qp = (H_qp + H_qp')/2;
+
+%% Definições das restrições.
+% Restrição no sinal de controle (razão cíclica).
+u_min = 0;
+u_max = 1;
+% Inequação na forma F_u * u <= G_u.
+F_u = [eye(N_controle);-eye(N_controle)];
+G_u = [u_max*ones(N_controle,1);-u_min*ones(N_controle,1)];
+% Escrevendo a inequação como F_du * delta_u <= G_du.
+M_u_para_delta_u = tril(ones(N_controle));
+F_du = F_u * M_u_para_delta_u;
+% Matriz G_du é calculada dentro da simulação do sistema.
+
+%% Simulação Linear.
+% Vetores utilizados no cálculo da resposta livre.
+y_passado = zeros(size(F,2),1);
+delta_u_passado = zeros(size(H,2),1);
+
+%Parâmetros da Simulação
+N_sim = 150;
+ref = 12;
+options = optimoptions('quadprog','Display','off');
+W = repmat(ref, N_predicao, 1);
+USAR_RESTRICOES = true;
+
+% Armazenar valores da simulação.
+y_sim = zeros(1, N_sim);
+u_sim = zeros(1, N_sim);
+x_sim = zeros(N_estados, N_sim);
+delta_u_sim = zeros(1, N_sim);
+
+% Condições Iniciais.
+x_sim(:,1) = zeros(N_estados, 1);
+u_anterior = 0;
+x_anterior = x_sim(:,1);
+
+
+% Loop da simulação linear.
+for k = 1:N_sim
+    % Vetor da resposta livre.
+    f_livre = F*y_passado + H * delta_u_passado;
+
+    % Determinação da saída.
+    y_sim(:,k) = C * x_sim(:,k);
+    y_passado = circshift(y_passado,1);
+    y_passado(1) = y_sim(:,k);
+    % Matriz F do quadprog.
+    F_qp = 2*(f_livre - W)' * Q_pred * G;
+    F_qp = F_qp';
+    % Determinação da matriz G_du das restrições.
+    L_du = u_anterior * ones(N_controle, 1);
+    G_du = G_u - F_u*L_du;
+          
+    % Determinação do vetor delta_U.
+    if USAR_RESTRICOES
+        delta_U = quadprog(H_qp, F_qp, F_du, G_du, [], [], [], [], [], options);
+    else
+        delta_U = quadprog(H_qp, F_qp, [], [], [], [], [], [], [], options);
+    end
+
+    % Proteção contra falha do solver.
+    if isempty(delta_U)
+        delta_U = zeros(N_controle, 1);
+    end
+     
+    % Armazena o incremento de controle utilizado.
+    delta_u_sim(:,k) = delta_U(1);
+    delta_u_passado = circshift(delta_u_passado,1);
+    delta_u_passado(1) = delta_u_sim(:,k);
+    % Determinação da ação de controle atual.
+    if USAR_RESTRICOES
+        u_sim(:,k) = u_anterior + delta_u_sim(:,k);
+    else
+       % Limite físico - Duty cycle entre 0 e 1.
+       u_sim(:,k) = limitar_u(u_anterior + delta_u_sim(:,k)); 
+    end
+
+    % Simulação da planta.
+    if k < N_sim
+        x_sim(:,k+1) = A * x_sim(:,k) + B * u_sim(:,k);
+    end
+    
+    % Atualização das memórias para a próxima iteração
+    u_anterior = u_sim(:,k);
+    x_anterior = x_sim(:,k);
+end
+
+
+%% Plotagem dos Resultados
+t = (0:N_sim-1) * T_sample;
+% Simulação Linear.
+figure(1);
+subplot(3,1,1);
+stairs(t, y_sim, 'k', 'LineWidth', 1.5); hold on;
+stairs(t, repmat(ref, 1, N_sim), 'r--', 'LineWidth', 1.5);
+title('Tensão de saída vs Referência');
+ylabel('Tensão (V)'); grid on; legend('Saída', 'Referência', 'Location', 'best');
+
+subplot(3,1,2);
+stairs(t, u_sim, 'k', 'LineWidth', 1.5); hold on;
+title('Ação de Controle (u)');
+xlabel('Tempo (s)'); ylabel('Duty Cycle'); grid on;
+subplot(3,1,3);
+
+stairs(t, delta_u_sim, 'k', 'LineWidth', 1.5); hold on;
+title('Incremento de controle (Δu)');
+xlabel('Tempo (s)'); ylabel('Amplitude'); grid on;

@@ -25,7 +25,7 @@ A_ss = [0 -(1-D)/(n*Lm) ; (1-D)/(n*C) -1/(R*C)];
 B_ss = [Vo/(n*Lm) + Vs/Lm; -Ilm/(n*C)];
 C_ss = [0 1];
 sys = ss(A_ss,B_ss,C_ss,0);
-T_sample = 2/freq; % Ajustar posteriormente.
+T_sample = 2/freq;
 sys_disc = c2d(sys,T_sample,'zoh');
 
 save("sys_disc.mat","sys_disc")
