@@ -6,6 +6,7 @@ load("sys_disc.mat");
 A = sys_disc.A;
 B = sys_disc.B;
 C = sys_disc.C;
+T_sample = sys_disc.Ts;
 
 N_estados = size(A,1);
 N_entradas = 1;
@@ -14,11 +15,11 @@ N_saidas = 1;
 Aaug = [A zeros(N_estados,N_saidas);C*A eye(N_saidas)];
 Baug = [B;C*B];
 Caug = [zeros(N_saidas, N_estados) eye(N_saidas,N_saidas)];
-sys_aug = ss(Aaug,Baug,Caug,0,sys_disc.Ts);
+sys_aug = ss(Aaug,Baug,Caug,0,T_sample);
 
 %% Matrizes de ponderação.
 Q = 1*eye(N_saidas);
-R = 20*eye(N_entradas);
+R = 50*eye(N_entradas);
 
 %% Calculando matrizes de predição.
 %Horizontes.
@@ -72,11 +73,11 @@ H = 2*(B_pred' * C_pred' * Q_pred * C_pred * B_pred + R_pred);
 H = (H + H')/2;
 
 %Parâmetros da Simulação
-N_sim = 100;
-ref = 12;
+N_sim = 150;
+ref = 15;
 options = optimoptions('quadprog','Display','off');
 W = repmat(ref, N_predicao, 1);
-USAR_RESTRICOES = false;
+USAR_RESTRICOES = true;
 
 % Armazenar valores da simulação.
 y_sim = zeros(1, N_sim);
@@ -143,9 +144,83 @@ for k = 1:N_sim
     x_anterior = x_sim(:,k);
 end
 
+%% Simulação Não Linear.
+
+% Ponto de equilibrio do conversor.
+U_eq = 0.5;   % Duty cycle de equilíbrio
+Y_eq = 12;    % Tensão de saída
+X_eq = [0.25; 12]; % Estados no equilíbrio
+
+% 0 <= u_lin + U_eq <= 1
+% Limites da razão cíclica em relação ao equilibrio.
+u_min_relativo = u_min - U_eq;
+u_max_relativo = u_max - U_eq;
+G_u = [u_max_relativo*ones(N_controle,1); -u_min_relativo*ones(N_controle,1)];
+
+% Condições Iniciais
+x_sim_nl(:,1) = X_eq;
+u_anterior_relativo = 0;
+x_anterior_relativo = zeros(N_estados, 1);
+
+% Definição da referência em 15 V. Perto do equilibrio.
+ref_abs = 15; 
+ref_lin = ref_abs - Y_eq;
+W = repmat(ref_lin, N_predicao, 1);
+
+% Armazenar valores
+y_sim_nl = zeros(1, N_sim);
+u_sim_nl = zeros(1, N_sim);
+delta_u_sim_nl = zeros(1, N_sim);
+
+% Loop da simulação
+for k = 1:N_sim
+    
+    % Medição da planta e Conversão para Desvio
+    y_sim_nl(:,k) = x_sim_nl(2,k);
+    % Valor da saída em relação ao equilibrio.
+    y_sim_lin = y_sim_nl(:,k) - Y_eq;
+    % Determinação do vetor de estados em relação ao equilibrio.
+    x_lin_atual = x_sim_nl(:,k) - X_eq; 
+    delta_x = x_lin_atual - x_anterior_relativo;
+    x_aug = [delta_x ; y_sim_lin];
+    
+    % Matriz F do quadprog.
+    F = 2*(C_pred*A_pred*x_aug - W)' * Q_pred * C_pred * B_pred;
+    
+    % Determinação da matriz G_du das restrições.
+    L_du = u_anterior_relativo * ones(N_controle, 1);
+    G_du = G_u - F_u*L_du;
+          
+    % Determinação do vetor delta_U.
+    delta_U = quadprog(H, F, F_du, G_du, [], [], [], [], [], options);
+    
+    % Caso haja erro no quadprog, o vetor delta_U é nulo.
+    if isempty(delta_U)
+        delta_U = zeros(N_controle, 1);
+    end
+    
+    delta_u_sim_nl(:,k) = delta_U(1:N_entradas);
+    
+    % Ação de controle em relação ao equilibrio.
+    u_sim_lin_k = u_anterior_relativo + delta_u_sim_nl(:,k);
+    u_sim_nl(:,k) = U_eq + u_sim_lin_k; 
+    
+    % Simulação da planta não linear.
+    if k < N_sim
+        t_span = [(k-1)*T_sample, k*T_sample];
+        [t_ode, x_ode] = ode45(@(t, x) modelo_medio(t, x, u_sim_nl(:,k)), t_span, x_sim_nl(:,k));
+        x_sim_nl(:,k+1) = x_ode(end, :)';
+    end
+    
+    % Atualização das memórias para a próxima iteração
+    u_anterior_relativo = u_sim_lin_k;
+    x_anterior_relativo = x_lin_atual;
+end
+
 %% Plotagem dos Resultados
-t = (0:N_sim-1) * sys_disc.Ts;
-figure;
+t = (0:N_sim-1) * T_sample;
+% Simulação Linear.
+figure(1);
 subplot(3,1,1);
 stairs(t, y_sim, 'k', 'LineWidth', 1.5); hold on;
 stairs(t, repmat(ref, 1, N_sim), 'r--', 'LineWidth', 1.5);
@@ -157,6 +232,25 @@ stairs(t, u_sim, 'k', 'LineWidth', 1.5); hold on;
 title('Ação de Controle (u)');
 xlabel('Tempo (s)'); ylabel('Duty Cycle'); grid on;
 subplot(3,1,3);
+
 stairs(t, delta_u_sim, 'k', 'LineWidth', 1.5); hold on;
+title('Incremento de controle (Δu)');
+xlabel('Tempo (s)'); ylabel('Amplitude'); grid on;
+
+% Simulação não Linear.
+figure(2);
+subplot(3,1,1);
+stairs(t, y_sim_nl, 'k', 'LineWidth', 1.5); hold on;
+stairs(t, repmat(ref_abs, 1, N_sim), 'r--', 'LineWidth', 1.5);
+title('Tensão de saída vs Referência');
+ylabel('Tensão (V)'); grid on; legend('Saída', 'Referência', 'Location', 'best');
+
+subplot(3,1,2);
+stairs(t, u_sim_nl, 'k', 'LineWidth', 1.5); hold on;
+title('Ação de Controle (u)');
+xlabel('Tempo (s)'); ylabel('Duty Cycle'); grid on;
+subplot(3,1,3);
+
+stairs(t, delta_u_sim_nl, 'k', 'LineWidth', 1.5); hold on;
 title('Incremento de controle (Δu)');
 xlabel('Tempo (s)'); ylabel('Amplitude'); grid on;

@@ -1,7 +1,13 @@
 clear;
 
 load("sys_disc.mat")
-[B_poly, A_poly] = ss2tf(sys_disc.A,sys_disc.B,sys_disc.C,sys_disc.D);
+A = sys_disc.A;
+B = sys_disc.B;
+C = sys_disc.C;
+D = sys_disc.D;
+T_sample = sys_disc.Ts;
+
+[B_poly, A_poly] = ss2tf(A,B,C,sys_disc.D);
 sys_tf = tf(B_poly,A_poly,sys_disc.Ts,'Variable', 'z^-1');
 N_predicao = 10;
 N_controle = 8;
