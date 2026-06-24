@@ -19,12 +19,12 @@ sys_aug = ss(Aaug,Baug,Caug,0,T_sample);
 
 %% Matrizes de ponderação.
 Q = 1*eye(N_saidas);
-R = 50*eye(N_entradas);
+R = 1000*eye(N_entradas);
 
 %% Calculando matrizes de predição.
 %Horizontes.
-N_predicao = 50;
-N_controle = 10;
+N_predicao = 25;
+N_controle = 25;
 %Determinação da matriz C de predição.
 C_pred = repmat({Caug},1,N_predicao);
 C_pred = blkdiag(C_pred{:});
@@ -74,7 +74,7 @@ H = (H + H')/2;
 
 %Parâmetros da Simulação
 N_sim = 150;
-ref = 15;
+ref = 12;
 options = optimoptions('quadprog','Display','off');
 W = repmat(ref, N_predicao, 1);
 USAR_RESTRICOES = true;
@@ -94,7 +94,7 @@ x_anterior = x_sim(:,1);
 for k = 1:N_sim
     % Adiciona perturbação na saída a partir da metade da simulação.
     if k > N_sim/2
-        perturbacao = 0.5*ref;
+        perturbacao = 0.2*ref;
     else
         perturbacao = 0;
     end
@@ -162,8 +162,8 @@ x_sim_nl(:,1) = X_eq;
 u_anterior_relativo = 0;
 x_anterior_relativo = zeros(N_estados, 1);
 
-% Definição da referência em 15 V. Perto do equilibrio.
-ref_abs = 15; 
+% Definição da referência em 14 V. Perto do equilibrio.
+ref_abs = 14; 
 ref_lin = ref_abs - Y_eq;
 W = repmat(ref_lin, N_predicao, 1);
 
@@ -178,11 +178,11 @@ for k = 1:N_sim
     % Medição da planta e Conversão para Desvio
     y_sim_nl(:,k) = x_sim_nl(2,k);
     % Valor da saída em relação ao equilibrio.
-    y_sim_lin = y_sim_nl(:,k) - Y_eq;
+    y_sim_relativo = y_sim_nl(:,k) - Y_eq;
     % Determinação do vetor de estados em relação ao equilibrio.
     x_lin_atual = x_sim_nl(:,k) - X_eq; 
     delta_x = x_lin_atual - x_anterior_relativo;
-    x_aug = [delta_x ; y_sim_lin];
+    x_aug = [delta_x ; y_sim_relativo];
     
     % Matriz F do quadprog.
     F = 2*(C_pred*A_pred*x_aug - W)' * Q_pred * C_pred * B_pred;

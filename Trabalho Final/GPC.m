@@ -1,4 +1,5 @@
 clear;
+clc;
 
 load("sys_disc.mat")
 A = sys_disc.A;
@@ -8,10 +9,10 @@ D = sys_disc.D;
 T_sample = sys_disc.Ts;
 N_estados = size(A,1);
 
-[B_poly, A_poly] = ss2tf(A,B,C,sys_disc.D);
+[B_poly, A_poly] = ss2tf(A,B,C,D);
 sys_tf = tf(B_poly,A_poly,sys_disc.Ts,'Variable', 'z^-1');
-N_predicao = 50;
-N_controle = 50;
+N_predicao = 25;
+N_controle = 25;
 
 % Função de transf. na forma (z^-1)*(B(z^-1))/(A(z^-1))
 B_poly = B_poly(2:end); % Retira o z^-1.
@@ -53,7 +54,7 @@ end
 
 %% Matrizes de ponderação.
 Q = 1;
-R = 200000;
+R = 1000;
 Q_pred = Q * eye(N_predicao);
 R_pred = R * eye(N_controle);
 H_qp = 2*(R_pred + G'*Q_pred*G);
@@ -73,6 +74,9 @@ F_du = F_u * M_u_para_delta_u;
 
 %% Simulação Linear.
 % Vetores utilizados no cálculo da resposta livre.
+% ATENÇÃO - Primeiro elemento do y_passado é o y(k).
+% ATENÇÃO - Primeiro elemento do delta_u_passado é o delta_u(k-1).
+
 y_passado = zeros(size(F,2),1);
 delta_u_passado = zeros(size(H,2),1);
 
@@ -97,16 +101,25 @@ x_anterior = x_sim(:,1);
 
 % Loop da simulação linear.
 for k = 1:N_sim
-    % Vetor da resposta livre.
-    f_livre = F*y_passado + H * delta_u_passado;
+    % Adiciona perturbação na saída a partir da metade da simulação.
+    if k > N_sim/2
+        perturbacao = 0.2*ref;
+    else
+        perturbacao = 0;
+    end
 
     % Determinação da saída.
-    y_sim(:,k) = C * x_sim(:,k);
+    y_sim(:,k) = C * x_sim(:,k) + perturbacao;
     y_passado = circshift(y_passado,1);
     y_passado(1) = y_sim(:,k);
+    
+    % Vetor da resposta livre.
+    f_livre = F * y_passado + H * delta_u_passado;
+
     % Matriz F do quadprog.
     F_qp = 2*(f_livre - W)' * Q_pred * G;
     F_qp = F_qp';
+
     % Determinação da matriz G_du das restrições.
     L_du = u_anterior * ones(N_controle, 1);
     G_du = G_u - F_u*L_du;
@@ -145,6 +158,89 @@ for k = 1:N_sim
     x_anterior = x_sim(:,k);
 end
 
+%% Simulação Não Linear.
+
+% Vetores utilizados no cálculo da resposta livre.
+y_passado_nl = zeros(size(F,2),1);
+delta_u_passado_nl = zeros(size(H,2),1);
+
+% Ponto de equilibrio do conversor.
+U_eq = 0.5;   % Duty cycle de equilíbrio
+Y_eq = 12;    % Tensão de saída
+X_eq = [0.25; 12]; % Estados no equilíbrio
+
+% 0 <= u_lin + U_eq <= 1
+% Limites da razão cíclica em relação ao equilibrio.
+u_min_relativo = u_min - U_eq;
+u_max_relativo = u_max - U_eq;
+G_u = [u_max_relativo*ones(N_controle,1); -u_min_relativo*ones(N_controle,1)];
+
+% Condições Iniciais
+x_sim_nl(:,1) = X_eq;
+u_anterior_relativo = 0;
+
+% Definição da referência em 14 V. Perto do equilibrio.
+ref_abs = 14; 
+ref_lin = ref_abs - Y_eq;
+W = repmat(ref_lin, N_predicao, 1);
+
+% Armazenar valores
+y_sim_nl = zeros(1, N_sim);
+u_sim_nl = zeros(1, N_sim);
+delta_u_sim_nl = zeros(1, N_sim);
+
+% Loop da simulação
+for k = 1:N_sim
+    
+    % Medição da planta e Conversão para Desvio
+    y_sim_nl(:,k) = x_sim_nl(2,k);
+
+    % Valor da saída em relação ao equilibrio.
+    y_sim_relativo = y_sim_nl(:,k) - Y_eq;
+    y_passado_nl = circshift(y_passado_nl,1);
+    y_passado_nl(1) = y_sim_relativo;
+
+    % Determinação do vetor de estados em relação ao equilibrio.
+    x_lin_atual = x_sim_nl(:,k) - X_eq; 
+
+    % Vetor da resposta livre.
+    f_livre = F* y_passado_nl + H * delta_u_passado_nl;
+
+    % Matriz F do quadprog.
+    F_qp = 2*(f_livre - W)' * Q_pred * G;
+    F_qp = F_qp';
+    
+    % Determinação da matriz G_du das restrições.
+    L_du = u_anterior_relativo * ones(N_controle, 1);
+    G_du = G_u - F_u*L_du;
+          
+    % Determinação do vetor delta_U.
+    delta_U = quadprog(H_qp, F_qp, F_du, G_du, [], [], [], [], [], options);
+    
+    % Caso haja erro no quadprog, o vetor delta_U é nulo.
+    if isempty(delta_U)
+        delta_U = zeros(N_controle, 1);
+    end
+    
+    % Armazena o incremento de controle utilizado.
+    delta_u_sim_nl(:,k) = delta_U(1);
+    delta_u_passado_nl = circshift(delta_u_passado_nl,1);
+    delta_u_passado_nl(1) = delta_u_sim_nl(:,k);
+    
+    % Ação de controle em relação ao equilibrio.
+    u_sim_relativo_k = u_anterior_relativo + delta_u_sim_nl(:,k);
+    u_sim_nl(:,k) = U_eq + u_sim_relativo_k; 
+    
+    % Simulação da planta não linear.
+    if k < N_sim
+        t_span = [(k-1)*T_sample, k*T_sample];
+        [t_ode, x_ode] = ode45(@(t, x) modelo_medio(t, x, u_sim_nl(:,k)), t_span, x_sim_nl(:,k));
+        x_sim_nl(:,k+1) = x_ode(end, :)';
+    end
+    
+    % Atualização das memórias para a próxima iteração
+    u_anterior_relativo = u_sim_relativo_k;
+end
 
 %% Plotagem dos Resultados
 t = (0:N_sim-1) * T_sample;
@@ -165,3 +261,22 @@ subplot(3,1,3);
 stairs(t, delta_u_sim, 'k', 'LineWidth', 1.5); hold on;
 title('Incremento de controle (Δu)');
 xlabel('Tempo (s)'); ylabel('Amplitude'); grid on;
+
+% Simulação não Linear.
+figure(2);
+subplot(3,1,1);
+stairs(t, y_sim_nl, 'k', 'LineWidth', 1.5); hold on;
+stairs(t, repmat(ref_abs, 1, N_sim), 'r--', 'LineWidth', 1.5);
+title('Tensão de saída vs Referência');
+ylabel('Tensão (V)'); grid on; legend('Saída', 'Referência', 'Location', 'best');
+
+subplot(3,1,2);
+stairs(t, u_sim_nl, 'k', 'LineWidth', 1.5); hold on;
+title('Ação de Controle (u)');
+xlabel('Tempo (s)'); ylabel('Duty Cycle'); grid on;
+subplot(3,1,3);
+
+stairs(t, delta_u_sim_nl, 'k', 'LineWidth', 1.5); hold on;
+title('Incremento de controle (Δu)');
+xlabel('Tempo (s)'); ylabel('Amplitude'); grid on;
+
