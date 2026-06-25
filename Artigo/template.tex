@@ -1,0 +1,102 @@
+\documentclass{article}
+
+
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage[brazil]{babel}
+\graphicspath{ {./images/} }
+
+
+\title{Modelagem e controle de um conversor flyback por meio de estratégias de controle preditivo.}
+
+
+\author{
+ Ricardo Augusto de Araújo Machado \\
+  Programa de Pós-Graduação em Engenharia Elétrica e de Computação\\
+  Universidade Federal da Bahia\\
+  \texttt{machado.ricardo@ufba.br} \\
+  %% examples of more authors
+  %% \AND
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+  Escrever resumo.
+\end{abstract}
+
+
+% keywords can be removed
+%\keywords{First keyword \and Second keyword \and More}
+
+
+\section{Introdução}
+O conversor flyback é um conversor estático de corrente contínua que opera tanto como elevador quanto como abaixador de tensão. Por conta da isolação galvânica presente no dispostivo, essa topologia de circuito é extremamente popular em fontes chaveadas(SMPS) de baixa potência \cite{Picard2010}.
+
+A operação do conversor flyback consiste em armazenar energia na indutância de magnetização do transformador enquanto o transistor conduz corrente e, em seguida, transferir essa energia armazenada para a saída enquanto o transistor estiver aberto \cite{Picard2010}.
+
+Mesmo com a popularidade desta topologia, o controle do conversor flyback apresenta uma determinada complexidade, pois o sistema é não linear, chaveado e apresenta um zero de fase não mínima. Considerando os desafios citados, o controle preditivo baseado em modelo(MPC) é uma metodologia de controle adequada para lidar com as complexidades do conversor.
+
+
+\section{Modelagem e dimensionamento do conversor flyback.}
+
+\subsection{Especificações escolhidas para o conversor flyback.}
+
+O conversor flyback é dimensionado para operar no modo de condução contínua, ou seja, a corrente no indutor é projetada para ser sempre maior que zero durante o ciclo de chaveamento. Ademais, a frequência de chaveamento é definida como \(50\ \mathrm{kHz}\) e a potência de saída nominal é \(6\ W\). As especificações completas são listadas na Tabela
+
+
+
+
+\subsection{Modelagem dinâmica do conversor.}
+
+A modelagem do conversor flyback, descrita nos livros \cite{Erickson2020} e, consiste na determinação das equações dinâmicas da tensão no indutor e da corrente no capacitor durante os dois estados de operação do conversor, chave fechada e chave aberta.
+
+\subsection{Dimensionamento do conversor.}
+
+As expressões para a tensão média no capacitor e para a corrente média no indutor, dadas por (\ref{eq:tensao_media}) e (\ref{eq:corrente_media}), são obtidas por meio do balanço Volt-Segundo no indutor e do balanço de carga no capacitor, respectivamente.
+
+\begin{equation}
+  V_\mathrm{C}
+  \label{eq:tensao_media}
+\end{equation}
+
+\begin{equation}
+  I_\mathrm{Lm}
+  \label{eq:corrente_media}
+\end{equation}
+
+A razão cíclica de equilibrio é determinada por meio de . Para as tensões nominais definidas, a razão cícilica obtida é \(\)
+
+
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+
+
+
+\end{document}
