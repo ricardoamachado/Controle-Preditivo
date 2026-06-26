@@ -11,11 +11,10 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
+\usepackage{amsmath}
 \usepackage{lipsum}
 \usepackage{graphicx}
 \usepackage[brazil]{babel}
-\graphicspath{ {./images/} }
-
 
 \title{Modelagem e controle de um conversor flyback por meio de estratégias de controle preditivo.}
 
@@ -55,42 +54,108 @@
 
 
 \section{Introdução}
-O conversor flyback é um conversor estático de corrente contínua que opera tanto como elevador quanto como abaixador de tensão. Por conta da isolação galvânica presente no dispostivo, essa topologia de circuito é extremamente popular em fontes chaveadas(SMPS) de baixa potência \cite{Picard2010}.
+O conversor flyback é um conversor estático de corrente contínua que opera tanto como elevador quanto como abaixador de tensão. Por conta da isolação galvânica presente no dispostivo, essa topologia de circuito é extremamente popular em fontes chaveadas (SMPS) de baixa potência \cite{Picard2010}.
 
 A operação do conversor flyback consiste em armazenar energia na indutância de magnetização do transformador enquanto o transistor conduz corrente e, em seguida, transferir essa energia armazenada para a saída enquanto o transistor estiver aberto \cite{Picard2010}.
-
-Mesmo com a popularidade desta topologia, o controle do conversor flyback apresenta uma determinada complexidade, pois o sistema é não linear, chaveado e apresenta um zero de fase não mínima. Considerando os desafios citados, o controle preditivo baseado em modelo(MPC) é uma metodologia de controle adequada para lidar com as complexidades do conversor.
+2
+Mesmo com a popularidade desta topologia, o controle do conversor flyback apresenta uma determinada complexidade, pois o sistema é não linear, chaveado e apresenta um zero de fase não mínima. Considerando os desafios citados, o controle preditivo baseado em modelo (MPC) é uma metodologia de controle adequada para lidar com as complexidades do conversor.
 
 
 \section{Modelagem e dimensionamento do conversor flyback.}
 
 \subsection{Especificações escolhidas para o conversor flyback.}
 
-O conversor flyback é dimensionado para operar no modo de condução contínua, ou seja, a corrente no indutor é projetada para ser sempre maior que zero durante o ciclo de chaveamento. Ademais, a frequência de chaveamento é definida como \(50\ \mathrm{kHz}\) e a potência de saída nominal é \(6\ W\). As especificações completas são listadas na Tabela
+O conversor flyback é dimensionado para operar no modo de condução contínua, ou seja, a corrente no indutor é projetada para ser sempre maior que zero durante o ciclo de chaveamento. Ademais, a frequência de chaveamento é definida como \(50\ \mathrm{kHz}\) e a potência de saída nominal é \(6\ W\). As especificações completas são listadas na Tabela \ref{tab:specs}.
 
+%TODO: Colocar especificações do ripple de tensão e ripple de corrente.
 
+\begin{table}[h]
+  \centering
+  \caption{Especificações do conversor flyback.}
+  \label{tab:specs}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Notação   & Nome do parâmetro               & Valor  \\ \hline
+    \(V_s\)   & Tensão de entrada               & 48 V   \\ \hline
+    \(V_o\)   & Tensão de saída                 & 12 V   \\ \hline
+    \(f_s\)   & Frequência de chaveamento       & 50 kHz \\ \hline
+    \(P_{o}\) & Potência de saída               & 6 W    \\ \hline
+    \(N_1\)   & Número de espiras no primário   & 4      \\ \hline
+    \(N_2\)   & Número de espiras no secundário & 1      \\ \hline
+    \(n\)     & Razão entre espiras             & 0,25   \\ \hline
+  \end{tabular}
+\end{table}
 
+A potência de saída desejada é obtida com um resistor de carga de 24 \(\Omega\), conforme à expressão \eqref{eq:r_carga}.
+
+\begin{equation}
+  R_L = \frac{V_o^2}{P_o}
+  \label{eq:r_carga}
+\end{equation}
 
 \subsection{Modelagem dinâmica do conversor.}
 
-A modelagem do conversor flyback, descrita nos livros \cite{Erickson2020} e, consiste na determinação das equações dinâmicas da tensão no indutor e da corrente no capacitor durante os dois estados de operação do conversor, chave fechada e chave aberta.
+A modelagem do conversor flyback (Fig. \ref{fig:diagrama_circuito}), descrita nos livros \cite{Erickson2020} e \cite{Hart2012}, consiste na determinação das equações dinâmicas da tensão no indutor e da corrente no capacitor durante os dois estados de operação do conversor, chave fechada (ON) e chave aberta (OFF). O modelo do conversor nos estados ON e OFF é descrito, respectivamente, nas equações \eqref{eq:estado_on} e \eqref{eq:estado_off}.
+
+\begin{figure}[h]
+  \centering
+  \caption{Diagrama de circuito do conversor flyback.}
+  \includegraphics[width=0.7\linewidth]{Figs/flyback.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:diagrama_circuito}
+
+\end{figure}
+
+
+\begin{equation}
+  \begin{cases}
+    \dfrac{di_{Lm}}{dt} = \dfrac{V_s}{L_m} \\ \\
+    \dfrac{dv_c}{dt} = -\dfrac{v_c}{RC}
+  \end{cases}
+  \label{eq:estado_on}
+\end{equation}
+
+
+\begin{equation}
+  \begin{cases}
+    \dfrac{d i_{Lm}}{dt} = - \dfrac{v_c}{n \cdot L_m} \\ \\
+    \dfrac{dv_c}{dt} = \dfrac{i_{Lm}}{n \cdot C} - \dfrac{v_c}{RC}
+  \end{cases}
+  \label{eq:estado_off}
+\end{equation}
+
+Em seguida, o modelo dinâmico médio do conversor é obtido pela ponderação dos estados com base na razão cíclica (\(d\)), conforme descrito em \eqref{eq:modelo_medio}. A saída do sistema é definida como a tensão no capacitor.
+
+\begin{equation}
+  \begin{cases}
+    h_1 := \dfrac{d i_{Lm}}{dt} = - \dfrac{(1-d)}{n \cdot L_m} v_c + \dfrac{d}{L_m} V_s \\ \\
+    h_2 := \dfrac{dv_c}{dt} = \dfrac{(1-d)}{n \cdot C} i_{Lm} - \dfrac{1}{RC} v_c       \\ \\
+    y = v_c
+  \end{cases}
+  \label{eq:modelo_medio}
+\end{equation}
+
+
 
 \subsection{Dimensionamento do conversor.}
 
-As expressões para a tensão média no capacitor e para a corrente média no indutor, dadas por (\ref{eq:tensao_media}) e (\ref{eq:corrente_media}), são obtidas por meio do balanço Volt-Segundo no indutor e do balanço de carga no capacitor, respectivamente.
+As expressões para a tensão média no capacitor e para a corrente média no indutor, dadas por \eqref{eq:tensao_media} e \eqref{eq:corrente_media}, são obtidas por meio do balanço Volt-Segundo no indutor e do balanço de carga no capacitor, respectivamente.
 
 \begin{equation}
-  V_\mathrm{C}
+  V_\mathrm{C} = \frac{n V_s D}{(1 - D)}
   \label{eq:tensao_media}
 \end{equation}
 
 \begin{equation}
-  I_\mathrm{Lm}
+  I_\mathrm{Lm} = \frac{n V_c}{R \cdot (1-D)}
   \label{eq:corrente_media}
 \end{equation}
 
-A razão cíclica de equilibrio é determinada por meio de . Para as tensões nominais definidas, a razão cícilica obtida é \(\)
+Para as tensões nominais definidas no projeto do conversor, a razão cíclica de equilibrio obtida é \(D = 0,5\). Ademais, os valores médios da tensão no capacitor e da corrente no indutor são, respectivamente, 12 V e 0,25 A.
 
+%TODO: Colocar determinação de capacitor e indutor.
+
+\subsection{Modelo linearizado do conversor.}
 
 
 \bibliographystyle{unsrt}
