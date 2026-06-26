@@ -1,3 +1,6 @@
+clear;
+clc;
+
 %Parâmetros de projeto.
 Vs = 48;
 Vo = 12;
@@ -17,15 +20,17 @@ R = Vo^2/Pout;
 Ilm = (n * Vo) / (R * (1-D));
 
 %Determinação de Lm e C.
-C = D/(R*freq*ripple_tensao);
-Lm = R*(1-D)^2/(ripple_corrente * n^2 * freq);
+C = D / (R * freq * ripple_tensao);
+Lm = ((1-D) ^ 2 * R) / (ripple_corrente * n^2 * freq);
 
 %Modelo em espaço de estados.
 A_ss = [0 -(1-D)/(n*Lm) ; (1-D)/(n*C) -1/(R*C)];
-B_ss = [Vo/(n*Lm) + Vs/Lm; -Ilm/(n*C)];
+B_ss = [(Vo/n + Vs)/Lm; -Ilm/(n*C)];
 C_ss = [0 1];
-sys = ss(A_ss,B_ss,C_ss,0);
+D_ss = 0;
+sys = ss(A_ss,B_ss,C_ss,D_ss);
+
+% Discretização.
 T_sample = 2/freq;
 sys_disc = c2d(sys,T_sample,'zoh');
-
 save("sys_disc.mat","sys_disc")

@@ -153,7 +153,17 @@ As expressões para a tensão média no capacitor e para a corrente média no in
 
 Para as tensões nominais definidas no projeto do conversor, a razão cíclica de equilibrio obtida é \(D = 0,5\). Ademais, os valores médios da tensão no capacitor e da corrente no indutor são, respectivamente, 12 V e 0,25 A.
 
-%TODO: Colocar determinação de capacitor e indutor.
+A capacitância e a indutância do conversor são determinadas com base nas especificações do ripple de tensão e ripple de corrente \cite{Erickson2020}, respectivamente, conforme \eqref{eq:capacitor_flyback} e \eqref{eq:indutor_flyback}. Os valores encontrados são \(C = \) e \(L = \)
+
+\begin{equation}
+  C = \frac{D}{Rs f_s \frac{|\Delta v_c|}{V_c}}
+  \label{eq:capacitor_flyback}
+\end{equation}
+
+\begin{equation}
+  L  =\frac{R(1-D)^2}{n^2 f_s \frac{|\Delta i_{Lm}|}{I_{Lm}}}
+  \label{eq:indutor_flyback}
+\end{equation}
 
 \subsection{Modelo linearizado do conversor.}
 
@@ -211,8 +221,8 @@ As matrizes \(A\) e \(B\) do modelo em espaço de estados linearizado são descr
 \begin{equation}
   B =
   \begin{bmatrix}
-    0                     & - \frac{1-D}{n\cdot L_m} \\ \\
-    \frac{1-D}{n \cdot C} & -\frac{1}{R C}
+    \frac{V_c}{n \cdot L_m} + \frac{V_s}{L_m} \\ \\
+    \frac{- I_{Lm}}{n \cdot C}
   \end{bmatrix}
   \label{eq:matriz_b}
 \end{equation}
@@ -230,6 +240,47 @@ As matrizes \(A\) e \(B\) do modelo em espaço de estados linearizado são descr
     \hat{y} = C \mathbf{\hat{x}}
   \end{cases}
   \label{eq:modelo_ss}
+\end{equation}
+
+\subsection{Discretização e determinação da função de transferência.}
+
+As matrizes numéricas do modelo em tempo contínuo são descritas por \eqref{eq:matrizes_numericas}. Em seguida, aplica-se a discretização do sistema por meio do retentor de ordem zero (ZOH) para a obtenção do modelo de espaços de estados em tempo discreto (Eqs. \eqref{eq:modelo_disc_ss} e \eqref{eq:matrizes_numericas_disc}). A frequência de amostragem utilizada (\(f_\mathrm{sample} = 25 \text{kHz}\)) é metade da frequência de chaveamento do conversor.
+
+
+\begin{equation}
+  A =
+  \begin{bmatrix}
+    0     & -312,50 \\
+    96000 & -2000
+  \end{bmatrix} \qquad   B =
+  \begin{bmatrix}
+    15000 \\
+    -48000
+  \end{bmatrix} \qquad   C = \begin{bmatrix}
+    0 & 1
+  \end{bmatrix}
+  \label{eq:matrizes_numericas}
+\end{equation}
+
+\begin{equation}
+  \begin{cases}
+    \mathbf{\hat{x}}_{k+1} = A_d \ \mathbf{\hat{x}}_k + B_d \  u_k \\ \\
+    \hat{y}_k = C \mathbf{\hat{x}}_k
+  \end{cases}
+  \label{eq:modelo_disc_ss}
+\end{equation}
+
+\begin{equation}
+  A_d =
+  \begin{bmatrix}
+    0,976720 & -0,011917 \\
+    3,660966 & 0,900450
+  \end{bmatrix} \qquad   B_d =
+  \begin{bmatrix}
+    0,606945 \\
+    -0,713054
+  \end{bmatrix}
+  \label{eq:matrizes_numericas_disc}
 \end{equation}
 
 

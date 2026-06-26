@@ -19,8 +19,8 @@ function dx = modelo_medio(t, x, u)
     R = Vo^2/Pout;
   
     %Determinação de Lm e C.
-    C = D/(R*freq*ripple_tensao);
-    Lm = R*(1-D)^2/(ripple_corrente * n^2 * freq);
+    C = D / (R * freq * ripple_tensao);
+    Lm = (R*(1-D) ^ 2) / (ripple_corrente * n^2 * freq);
     dx = zeros(2,1);
     %Derivada da Corrente no indutor.
     dx(1) = -(1-u)/(n*Lm) * x(2) + (u * Vs)/Lm;
