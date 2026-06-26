@@ -57,7 +57,7 @@
 O conversor flyback é um conversor estático de corrente contínua que opera tanto como elevador quanto como abaixador de tensão. Por conta da isolação galvânica presente no dispostivo, essa topologia de circuito é extremamente popular em fontes chaveadas (SMPS) de baixa potência \cite{Picard2010}.
 
 A operação do conversor flyback consiste em armazenar energia na indutância de magnetização do transformador enquanto o transistor conduz corrente e, em seguida, transferir essa energia armazenada para a saída enquanto o transistor estiver aberto \cite{Picard2010}.
-2
+
 Mesmo com a popularidade desta topologia, o controle do conversor flyback apresenta uma determinada complexidade, pois o sistema é não linear, chaveado e apresenta um zero de fase não mínima. Considerando os desafios citados, o controle preditivo baseado em modelo (MPC) é uma metodologia de controle adequada para lidar com as complexidades do conversor.
 
 
@@ -67,23 +67,23 @@ Mesmo com a popularidade desta topologia, o controle do conversor flyback aprese
 
 O conversor flyback é dimensionado para operar no modo de condução contínua, ou seja, a corrente no indutor é projetada para ser sempre maior que zero durante o ciclo de chaveamento. Ademais, a frequência de chaveamento é definida como \(50\ \mathrm{kHz}\) e a potência de saída nominal é \(6\ W\). As especificações completas são listadas na Tabela \ref{tab:specs}.
 
-%TODO: Colocar especificações do ripple de tensão e ripple de corrente.
-
 \begin{table}[h]
-  \centering
-  \caption{Especificações do conversor flyback.}
-  \label{tab:specs}
-  \begin{tabular}{|l|l|l|}
-    \hline
-    Notação   & Nome do parâmetro               & Valor  \\ \hline
-    \(V_s\)   & Tensão de entrada               & 48 V   \\ \hline
-    \(V_o\)   & Tensão de saída                 & 12 V   \\ \hline
-    \(f_s\)   & Frequência de chaveamento       & 50 kHz \\ \hline
-    \(P_{o}\) & Potência de saída               & 6 W    \\ \hline
-    \(N_1\)   & Número de espiras no primário   & 4      \\ \hline
-    \(N_2\)   & Número de espiras no secundário & 1      \\ \hline
-    \(n\)     & Razão entre espiras             & 0,25   \\ \hline
-  \end{tabular}
+\centering
+\caption{Especificações do conversor flyback.}
+\label{tab:specs}
+\begin{tabular}{|l|l|l|}
+\hline
+Notação                      & Nome do parâmetro               & Valor  \\ \hline
+\(V_s\)                      & Tensão de entrada               & 48 V   \\ \hline
+\(V_o\)                      & Tensão de saída                 & 12 V   \\ \hline
+\(f_s\)                      & Frequência de chaveamento       & 50 kHz \\ \hline
+\(P_o\)                      & Potência de saída               & 6 W    \\ \hline
+\(\frac{\Delta v_C}{V_C}\)       & Ripple de tensão                & 2\%    \\ \hline
+\(\frac{\Delta i_{Lm}}{I_{Lm}}\) & Ripple de corrente              & 30\%   \\ \hline
+\(N_1\)                      & Número de espiras no primário   & 4      \\ \hline
+\(N_2\)                      & Número de espiras no secundário & 1      \\ \hline
+\(n\)                        & Razão entre espiras             & 0,25   \\ \hline
+\end{tabular}
 \end{table}
 
 A potência de saída desejada é obtida com um resistor de carga de 24 \(\Omega\), conforme à expressão \eqref{eq:r_carga}.
@@ -156,6 +156,81 @@ Para as tensões nominais definidas no projeto do conversor, a razão cíclica d
 %TODO: Colocar determinação de capacitor e indutor.
 
 \subsection{Modelo linearizado do conversor.}
+
+O modelo linearizado do conversor em espaço de estados é obtido com a determinação do Jacobiano do sistema em relação aos estados e em relação à entrada, conforme descrito em \eqref{eq:jacobiano_estados} e \eqref{eq:jacobiano_saida}. O vetor de estados é representado por \(\mathbf{x}\), o vetor de estados no equilibrio por \(\mathbf{X}\) e o vetor de desvio dos estados em relação ao equilibrio por \(\mathbf{\hat{x}}\) (Eq. \eqref{eq:vetor_estados}).
+
+\begin{equation}A =
+  \begin{bmatrix}
+    \frac{\partial h_1}{\partial i_{Lm}} & \frac{\partial h_1}{\partial v_{C}} \\ \\
+    \frac{\partial h_2}{\partial i_{Lm}} & \frac{\partial h_2}{\partial v_{C}}
+  \end{bmatrix}_{\mathbf{x} = \mathbf{X},\ d = D}
+  \label{eq:jacobiano_estados}
+\end{equation}
+
+\begin{equation}
+  B =
+  \begin{bmatrix}
+    \frac{\partial h_1}{\partial d} \\ \\
+    \frac{\partial h_2}{\partial d}
+  \end{bmatrix}_{\mathbf{x} = \mathbf{X},\ d = D}
+  \label{eq:jacobiano_saida}
+\end{equation}
+
+
+
+\begin{equation}
+  \mathbf{x} = \begin{bmatrix}
+    i_{Lm} \\
+    v_C
+  \end{bmatrix}
+  \qquad   \mathbf{X} = \begin{bmatrix}
+    I_{Lm} \\
+    V_C
+  \end{bmatrix}
+  \label{eq:vetor_estados} \qquad \mathbf{\hat{x}} = \begin{bmatrix}
+    \hat{i}_{Lm} \\
+    \hat{v}_C
+  \end{bmatrix} =  \begin{bmatrix}
+    i_{Lm} - I_{Lm} \\
+    v_C - V_C
+  \end{bmatrix}
+\end{equation}
+
+
+As matrizes \(A\) e \(B\) do modelo em espaço de estados linearizado são descritas em \eqref{eq:matriz_a} e \eqref{eq:matriz_b}. Ademais, a saída do conversor é a tensão no capacitor, o que resulta na matriz \(C\) dada por \eqref{eq:matriz_c}. O modelo linearizado do conversor é descrito por \eqref{eq:modelo_ss}, com o sinal de entrada \(u\) representando a razão cíclica \(d\).
+
+\begin{equation}
+  A =
+  \begin{bmatrix}
+    0                     & - \frac{1-D}{n\cdot L_m} \\ \\
+    \frac{1-D}{n \cdot C} & -\frac{1}{R C}
+  \end{bmatrix}
+  \label{eq:matriz_a}
+\end{equation}
+
+\begin{equation}
+  B =
+  \begin{bmatrix}
+    0                     & - \frac{1-D}{n\cdot L_m} \\ \\
+    \frac{1-D}{n \cdot C} & -\frac{1}{R C}
+  \end{bmatrix}
+  \label{eq:matriz_b}
+\end{equation}
+
+\begin{equation}
+  C = \begin{bmatrix}
+    0 & 1
+  \end{bmatrix}
+  \label{eq:matriz_c}
+\end{equation}
+
+\begin{equation}
+  \begin{cases}
+    \dfrac{d \mathbf{\hat{x}}}{d t} = A \mathbf{\hat{x}} + B u \\ \\
+    \hat{y} = C \mathbf{\hat{x}}
+  \end{cases}
+  \label{eq:modelo_ss}
+\end{equation}
 
 
 \bibliographystyle{unsrt}
