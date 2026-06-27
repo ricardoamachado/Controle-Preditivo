@@ -28,15 +28,15 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="4"
-     inkscape:cx="-323.625"
-     inkscape:cy="-2280.75"
+     inkscape:zoom="8"
+     inkscape:cx="-408.75"
+     inkscape:cy="-2255.75"
      inkscape:window-width="2560"
      inkscape:window-height="1351"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="use1-8">
+     inkscape:current-layer="g6">
     <inkscape:grid
        id="grid1"
        units="mm"
@@ -721,10 +721,70 @@
              style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.352801;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
              d="M 19.071828,46.09274 H 32.479181"
              id="path7" />
-          <use
-             xlink:href="#voltage2"
+          <g
              id="use1-1"
-             transform="matrix(1.3335123,0,0,1.3333334,-62.67001,-88.350195)" />
+             transform="matrix(1.3335123,0,0,1.3333334,-62.581804,-88.350195)">
+            <title
+               id="title3">voltage2_inkscape_duplicate</title>
+            <g
+               id="g26"
+               transform="matrix(0.74684881,0,0,0.75,167.8734,-10.884689)">
+              <title
+                 id="title4">voltage</title>
+              <g
+                 id="g8"
+                 transform="translate(-10.773414,0.58948909)"
+                 style="stroke-width:1.33614">
+                <text
+                   class="f1"
+                   x="-182.63799"
+                   y="159.72504"
+                   id="text6"
+                   style="font-size:4.71362px;font-family:'Latin Modern Roman';fill:#000000;stroke:none;stroke-width:0.354936;stroke-miterlimit:10"><tspan
+                     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.71362px;font-family:'Latin Modern Roman Slanted';-inkscape-font-specification:'Latin Modern Roman Slanted';text-align:end;text-anchor:end;stroke-width:0.354936"
+                     id="tspan4">V</tspan></text>
+                <text
+                   class="f3"
+                   x="-183.09607"
+                   y="160.25223"
+                   id="text7"
+                   style="font-size:3.29953px;font-family:'Latin Modern Roman';fill:#000000;stroke:none;stroke-width:0.354936;stroke-miterlimit:10">s</text>
+              </g>
+              <g
+                 id="g25"
+                 style="stroke-width:1.33614">
+                <path
+                   d="m -187.48689,168.96842 v -6.84998 m 0,-6.30003 v -6.84998"
+                   fill="none"
+                   id="path8"
+                   style="stroke:#000000;stroke-width:0.353609;stroke-miterlimit:10" />
+                <path
+                   d="m -190.6369,158.96843 c 0,1.73972 1.41028,3.15001 3.15001,3.15001 1.73973,0 3.15001,-1.41029 3.15001,-3.15001 0,-1.73973 -1.41028,-3.15002 -3.15001,-3.15002 -1.73973,0 -3.15001,1.41029 -3.15001,3.15002 z m 3.15001,0"
+                   fill="none"
+                   id="path13"
+                   style="stroke:#000000;stroke-width:0.353521;stroke-miterlimit:10;stroke-dasharray:none" />
+                <g
+                   id="g24"
+                   transform="translate(0,0.35248)"
+                   style="stroke-width:1.33614">
+                  <path
+                     d="m -188.66163,157.37026 c 0,0.0388 0.0318,0.0706 0.0706,0.0706 h 1.03364 v 1.03364 c 0,0.0388 0.0317,0.0706 0.0705,0.0706 0.0388,0 0.0706,-0.0318 0.0706,-0.0706 v -1.03364 h 1.03364 c 0.0388,0 0.0705,-0.0317 0.0705,-0.0706 0,-0.0388 -0.0317,-0.0705 -0.0705,-0.0705 h -1.03364 v -1.03364 c 0,-0.0388 -0.0318,-0.0706 -0.0706,-0.0706 -0.0388,0 -0.0705,0.0317 -0.0705,0.0706 v 1.03364 h -1.03364 c -0.0388,0 -0.0706,0.0318 -0.0706,0.0705 z"
+                     id="path14"
+                     style="stroke-width:0.354936;stroke-miterlimit:10"
+                     class="f2"
+                     aria-label="+" />
+                  <path
+                     style="-inkscape-font-specification:'Latin Modern Roman, ';stroke-width:0.354936;stroke-miterlimit:10"
+                     d="m -188.65987,160.5666 c 0,0.0706 0.067,0.0706 0.11642,0.0706 h 2.11314 c 0.0494,0 0.11641,0 0.11641,-0.0706 0,-0.0706 -0.067,-0.0706 -0.11995,-0.0706 h -2.10608 c -0.0529,0 -0.11994,0 -0.11994,0.0706 z"
+                     id="path19"
+                     class="f0"
+                     aria-label="−" />
+                </g>
+              </g>
+              <title
+                 id="title26">voltage</title>
+            </g>
+          </g>
           <g
              id="use1-0"
              transform="matrix(1.3335123,0,0,1.3333334,-24.983367,-243.64776)">
@@ -883,7 +943,7 @@
              transform="matrix(1.3335123,0,0,1.3333334,-51.783445,51.593913)" />
           <path
              style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.352801;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-             d="M -25.531778,66.035385 V 79.507086"
+             d="M -25.438221,66.035385 V 79.507086"
              id="path32" />
           <path
              style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.355459;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"

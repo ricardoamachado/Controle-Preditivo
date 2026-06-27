@@ -27,29 +27,27 @@ C_ss = [0 1];
 sys = ss(A_ss,B_ss,C_ss,0);
 T_sample = 2/freq; % Ajustar posteriormente.
 sys_disc = c2d(sys,T_sample,'zoh');
-figure(1)
-bode(sys)
 
 %Comparação entre simulação e modelo.
-load("Resp Freq.mat")
+load("Resp Freq 0.01 Amplitude.mat")
 [mag, phase, freqs] = bode(sys, 2*pi*Frequency);
 mag = squeeze(mag);
 mag = 20*log10(mag);
 phase = squeeze(phase);
 phase = phase - 360;
-figure(2)
+figure(1)
 tiledlayout(2,1)
 nexttile
-semilogx(Frequency,amp_Vo2,'b')
+semilogx(Frequency,amp_Vo2,'b--','LineWidth', 2.5)
 hold on
-semilogx(Frequency,mag,'r')
+semilogx(Frequency,mag,'k','LineWidth', 1)
 legend('Simulação','Modelo')
 xlabel("Frequência (Hz)")
 ylabel("Magnitude (dB)")
 nexttile
-semilogx(Frequency,phase_Vo2,'b')
+semilogx(Frequency,phase_Vo2,'b--','LineWidth', 2.5)
 hold on
-semilogx(Frequency,phase,'r')
+semilogx(Frequency,phase,'k','LineWidth', 1)
 legend('Simulação','Modelo')
 xlabel("Frequência (Hz)")
 ylabel("Fase (graus)")
