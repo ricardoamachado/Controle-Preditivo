@@ -2,7 +2,6 @@
 
 
 \usepackage{arxiv}
-
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
 \usepackage{hyperref}       % hyperlinks
@@ -286,9 +285,25 @@ As matrizes numéricas do modelo em tempo contínuo são descritas por \eqref{eq
 
 \subsection{Validação do modelo linearizado.}
 
-A validação do modelo linearizado é realizado através da comparação entre a simulação de \textit{AC Sweep} do conversor para uma perturbação senoidal no \textit{duty cycle} e a resposta em frequência do modelo obtido. O diagrama de circuito da simulação \textit{AC} é exibido na Figura , a perturbação senoidal tem amplitude de 0,01 e frequência variável entre 100 Hz e 10 kHz.
+A validação do modelo linearizado é realizado através da comparação entre a simulação de \textit{AC Sweep} do conversor para uma perturbação senoidal no \textit{duty cycle} e a resposta em frequência do modelo obtido. O diagrama de circuito da simulação \textit{AC} é exibido na Figura \ref{fig:diagrama_sim}, a perturbação senoidal tem amplitude de 0,01 e frequência variável entre 100 Hz e 10 kHz.
 
-A Figura ilustra a comparação entre a simulação de \textit{AC Sweep} do conversor
+\begin{figure}[htb]
+  \centering
+  \caption{Diagrama da simulação \textit{AC Sweep} realizada no PSIM.}
+  \includegraphics[width=0.7\textwidth]{Figs/Diagrama Simulação.png}
+  \\ \small Fonte: Autoral.
+  \label{fig:diagrama_sim}
+\end{figure}
+
+A Figura \ref{fig:comp_resp_freq} ilustra a comparação entre a simulação de \textit{AC Sweep} do conversor e a reposta em frequência do modelo linearizado. Na faixa de frequência avaliada, tanto a resposta de amplitude quanto a resposta de fase do modelo são fieis ao comportamento do conversor flyback perto do ponto de equilibrio.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Comparação entre simulação AC e resposta em frequência do modelo.}
+  \includegraphics[width=0.7\textwidth]{Figs/Valid Modelo.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:comp_resp_freq}
+\end{figure}
 
 \section{Estratégias de controle preditivo utilizadas.}
 
@@ -304,7 +319,7 @@ A Figura ilustra a comparação entre a simulação de \textit{AC Sweep} do conv
 
 \section{Resultados.}
 
-%Explicar sobre a estrutura da seção de resultados.
+%TODO: Explicar sobre a estrutura da seção de resultados.
 
 \subsection{Simulação dos controladores com planta linearizada.}
 
