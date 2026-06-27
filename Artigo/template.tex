@@ -319,15 +319,32 @@ A Figura \ref{fig:comp_resp_freq} ilustra a comparação entre a simulação de 
 
 \section{Resultados.}
 
-%TODO: Explicar sobre a estrutura da seção de resultados.
+%TODO: Colocar intervalo de tempo.
+
+Nesta seção, os controladores GPC, DMC e o SSMPC são avaliados tanto na simulação do modelo linearizado quanto no controle da planta não linear em torno do ponto de equilibrio. Em primeira instância, avalia-se o desempenho dos três controladores nas tarefas de seguimento de referência e rejeição de perturbação constante, considerando os paramêtros de sintonia listados na Tabela . Todas as simulações são executadas num intervalo de 200 amostras, o que implica num intervalo de tempo entre A e B ms.
+
+
+%TODO: Colocar parâmetros de sintonia.
+
+Em seguida, a análise de saturação no \textit{duty cycle} é realizada com a execução das estratégias de controle preditivo sem restrições no sinal de controle. Por fim, avalia-se o efeito da ponderação no esforço de controle \(R\) e o efeito da variação do horizonte de predição nos controladores.
 
 \subsection{Simulação dos controladores com planta linearizada.}
+
+%TODO: Colocar figura e comentar resultados.
+
+A Figura mostra a simulação do modelo linearizado com as três estratégias de controle preditivo abordadas. A referência é definida como \(12_V\) e uma perturção constante com amplitude de 20\% da referência é aplicada ao sistema a partir da metade do intervalo de tempo.
 
 \subsection{Simulação dos controladores com planta não linear.}
 
 \subsection{Análise do controladores sem restrições e com saturação física.}
 
 \subsection{Efeito da variação da ponderação no esforço de controle.}
+
+... Nesta seção, avalia-se apenas a variação da poderação no esforço de controle , pois, visto que o sistema é SISO, reduzir a ponderação no controle equivale a aumentar a ponderação na saída e vice-versa.
+
+\subsection{Efeito da variação do horizonte de predição.}
+
+\section{Conclusões.}
 
 \bibliographystyle{unsrt}
 \bibliography{references}
