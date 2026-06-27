@@ -44,8 +44,6 @@
 .mtc
 *.smv
 *.pdf
-Trabalho Final/sys_disc.mat
-Trabalho Final/G.mat
 Artigo/README.md
 Trabalho Final/Projeto Flyback/Resp Freq 0.05 Amplitude.mat
 !Artigo/Figs/**
