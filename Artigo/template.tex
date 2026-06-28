@@ -321,7 +321,7 @@ A Figura \ref{fig:comp_resp_freq} ilustra a comparação entre a simulação de 
 
 %TODO: Definir o MPC.
 
-\subsection{MPC em espaço de estados.}
+\subsection{MPC em espaço de estados (SSMPC).}
 
 \subsection{Generalized Matrix Control (GPC)}
 
@@ -400,9 +400,35 @@ No caso da rejeição de perturbação sem restrições, visto na Figura \ref{fi
 \end{figure}
 
 
-\subsection{Efeito da variação da ponderação no esforço de controle.}
+\subsection{Efeito da variação da ponderação do esforço de controle.}
 
-... Nesta seção, avalia-se apenas a variação da poderação no esforço de controle, pois, visto que o sistema é SISO, reduzir a ponderação no controle equivale a aumentar a ponderação na saída e vice-versa.
+Os dois parâmetros de sintonia que influenciam diretamente na função objetivo do controlador preditivo são a ponderação do erro da saída \(Q\) e a ponderação do esforço de controle \(R\). Nesta seção, avalia-se apenas a variação da poderação do esforço de controle, pois, visto que o sistema é SISO, reduzir a ponderação no controle equivale a aumentar a ponderação no erro e vice-versa.
+
+As Figuras \ref{fig:variacao_r_dmc}, \ref{fig:variacao_r_gpc} e \ref{fig:variacao_r_ssmpc} mostram o efeito da variação do parâmetro \(R\) para o DMC, o GPC e o SSMPC, respectivamente. Nos três casos, um valor menor de R resulta numa resposta ao degrau mais veloz e uma rejeição de perturbações mais rápida, no entanto, o sinal de controle atinge valores maiores.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação da ponderação do esforço de controle no DMC.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação R DMC.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:variacao_r_dmc}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação da ponderação do esforço de controle no GPC.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação R GPC.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:variacao_r_gpc}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação da ponderação do esforço de controle no SSMPC.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação R SSMPC.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:variacao_r_ssmpc}
+\end{figure}
 
 \subsection{Efeito da variação do horizonte de predição.}
 
