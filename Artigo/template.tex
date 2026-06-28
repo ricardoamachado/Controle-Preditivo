@@ -152,7 +152,7 @@ As expressões para a tensão média no capacitor e para a corrente média no in
 
 Para as tensões nominais definidas no projeto do conversor, a razão cíclica de equilibrio obtida é \(D = 0,5\). Ademais, os valores médios da tensão no capacitor e da corrente no indutor são, respectivamente, 12 V e 0,25 A.
 
-A capacitância e a indutância do conversor são determinadas com base nas especificações do ripple de tensão e ripple de corrente \cite{Erickson2020}, respectivamente, conforme \eqref{eq:capacitor_flyback} e \eqref{eq:indutor_flyback}. Os valores encontrados são \(C = \) e \(L = \)
+A capacitância e a indutância do conversor são determinadas com base nas especificações do ripple de tensão e ripple de corrente \cite{Erickson2020}, respectivamente, conforme \eqref{eq:capacitor_flyback} e \eqref{eq:indutor_flyback}. Os valores encontrados são \(C = 20.833\ \mathrm{\mu F}\) e \(L = 6.4\ \mathrm{mH} \)
 
 \begin{equation}
   C = \frac{D}{Rs f_s \frac{|\Delta v_c|}{V_c}}
@@ -247,7 +247,7 @@ As matrizes \(A\) e \(B\) do modelo em espaço de estados linearizado são descr
 
 \begin{equation}
   \begin{cases}
-    \dfrac{d \mathbf{\hat{x}}}{d t} = A \mathbf{\hat{x}} + B u \\ \\
+    \dfrac{d \mathbf{\hat{x}}}{d t} = A \mathbf{\hat{x}} + B \hat{u} \\ \\
     \hat{y} = C \mathbf{\hat{x}}
   \end{cases}
   \label{eq:modelo_ss}
@@ -275,7 +275,7 @@ As matrizes numéricas do modelo em tempo contínuo são descritas por \eqref{eq
 
 \begin{equation}
   \begin{cases}
-    \mathbf{\hat{x}}_{k+1} = A_d \ \mathbf{\hat{x}}_k + B_d \  u_k \\ \\
+    \mathbf{\hat{x}}_{k+1} = A_d \ \mathbf{\hat{x}}_k + B_d \  \hat{u}_k \\ \\
     \hat{y}_k = C \mathbf{\hat{x}}_k
   \end{cases}
   \label{eq:modelo_disc_ss}
@@ -343,7 +343,7 @@ Nesta seção, os controladores GPC, DMC e o SSMPC são avaliados tanto na simul
     Notação           & Nome do parâmetro                 & Valor \\ \hline
     \(N\)             & Horizonte de predição             & 50    \\ \hline
     \(N_u\)           & Horizonte de controle             & 50    \\ \hline
-    \(N_\mathrm{ss}\) & Horizonte de truncamento do DMC   & 150   \\ \hline
+    \(N_\mathrm{trunc}\) & Horizonte de truncamento do DMC   & 150   \\ \hline
     \(Q\)             & Ponderação do erro da saída       & 1     \\ \hline
     \(R\)             & Ponderação do esforço de controle & 10000 \\ \hline
   \end{tabular}
@@ -357,7 +357,7 @@ A Figura \ref{fig:resp_linear} mostra a simulação do modelo linearizado com as
 \begin{figure}[htb]
   \centering
   \caption{Saída do modelo linearizado e sinais de controle.}
-  \includegraphics[width=0.7\textwidth]{Figs/Resposta Linear.pdf}
+  \includegraphics[width=0.9\textwidth]{Figs/Resposta Linear.pdf}
   \\ \small Fonte: Autoral.
   \label{fig:resp_linear}
 \end{figure}
@@ -372,18 +372,52 @@ A Figura \ref{fig:resp_nao_linear} exibe as respostas do modelo não linear do c
 \begin{figure}[htb]
   \centering
   \caption{Saída do modelo não linear e sinais de controle.}
-  \includegraphics[width=0.7\textwidth]{Figs/Resposta não Linear.pdf}
+  \includegraphics[width=0.9\textwidth]{Figs/Resposta não Linear.pdf}
   \\ \small Fonte: Autoral.
   \label{fig:resp_nao_linear}
 \end{figure}
 
 \subsection{Análise do controladores sem restrições e com saturação física.}
 
+Para visualizar melhor o efeito da saturação física nos controladores, reduz-se a ponderação do esforço de controle para \(R = 300\) e analisa-se as respostas dos sistemas com e sem restrições. As respostas do sistema com os controladores restritos são exibidas na Figura \ref{fig:resp_com_restricoes}, devido a rejeição de pertubação mais agressiva do GPC, o otimizador encontra valores maiores, em módulo, para o incremento de controle. Entretanto, devido as restrições, os incrementos de controle sempre fazem o \textit{duty cycle} variar no intervalo de 0 e 1. O valor máximo da tensão de saída durante a rejeição de perturbação com o GPC é de 16,87 V.
+
+No caso da rejeição de perturbação sem restrições, visto na Figura \ref{fig:resp_sem_restricoes}, o otimizador encontra valores de incremento de controle que resultariam num sinal de controle fora do intervalo entre 0 e 1 para o GPC, no entanto, devido à saturação física no \textit{duty cycle}, o sinal de controle oscila durante 7 períodos de amostragem entre 0 e 1. Dessa forma, a rejeição de perturbação é do GPC é extremamente lenta e observa-se uma tensão máxima de 23,79 V na saída do conversor.
+
+\begin{figure}[h]
+  \centering
+  \caption{Respostas do modelo linearizado para os controladores com \(R = 300\) e restrições.}
+  \includegraphics[width=0.9\textwidth]{Figs/Resp Linear R 300 Com Restrições.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:resp_com_restricoes}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \caption{Respostas do modelo linearizado para os controladores irrestritos com \(R = 300\).}
+  \includegraphics[width=0.9\textwidth]{Figs/Resp Linear R 300 Sem Restrições.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:resp_sem_restricoes}
+\end{figure}
+
+
 \subsection{Efeito da variação da ponderação no esforço de controle.}
 
 ... Nesta seção, avalia-se apenas a variação da poderação no esforço de controle, pois, visto que o sistema é SISO, reduzir a ponderação no controle equivale a aumentar a ponderação na saída e vice-versa.
 
 \subsection{Efeito da variação do horizonte de predição.}
+
+\subsection{Efeito da variação do horizonte de truncamento no DMC.}
+
+A análise do efeito do horizonte de truncamento no DMC é realizada variando o parâmetro entre 20, 50, 100 e 150 amostras conforme ilustrado na Figura \ref{fig:variacao_truncamento_dmc}. Conforme esperado, a redução do horizonte de truncamento faz o controlador não enxergar a parcela final do comportamento dinâmico da planta, o que causa oscilações na saída do sistema. Para \(N_\text{trunc} = 100\) há uma oscilação mínima em 4,5 ms, enquanto \(N_\text{trunc} = 50\) resulta numa oscilação perceptível a partir de 2 ms, que é dissipada ao longo do tempo. Por fim, para \(N_\text{trunc} = 20\), a resposta do sistema é complemente oscilatória ao longo do tempo.
+
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação do horizonte de truncamento.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação N truncamento.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:variacao_truncamento_dmc}
+\end{figure}
 
 \section{Conclusões.}
 
