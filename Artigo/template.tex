@@ -331,28 +331,51 @@ A Figura \ref{fig:comp_resp_freq} ilustra a comparação entre a simulação de 
 
 \section{Resultados.}
 
-%TODO: Colocar intervalo de tempo.
-
-Nesta seção, os controladores GPC, DMC e o SSMPC são avaliados tanto na simulação do modelo linearizado quanto no controle da planta não linear em torno do ponto de equilibrio. Em primeira instância, avalia-se o desempenho dos três controladores nas tarefas de seguimento de referência e rejeição de perturbação constante, considerando os paramêtros de sintonia listados na Tabela . Todas as simulações são executadas num intervalo de 200 amostras, o que implica num intervalo de tempo entre A e B ms.
+Nesta seção, os controladores GPC, DMC e o SSMPC são avaliados tanto na simulação do modelo linearizado quanto no controle da planta não linear em torno do ponto de equilibrio. Em primeira instância, avalia-se o desempenho dos três controladores nas tarefas de seguimento de referência e rejeição de perturbação constante, considerando os paramêtros de sintonia listados na Tabela \ref{tab:sintonia_controladores}. Todas as simulações são executadas num intervalo de 200 amostras, o que implica num intervalo de tempo entre 0 e 8 ms.
 
 
-%TODO: Colocar parâmetros de sintonia.
-
+\begin{table}[h]
+  \centering
+  \caption{Parâmetros de sintonia dos controladores.}
+  \label{tab:sintonia_controladores}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Notação           & Nome do parâmetro                 & Valor \\ \hline
+    \(N\)             & Horizonte de predição             & 50    \\ \hline
+    \(N_u\)           & Horizonte de controle             & 50    \\ \hline
+    \(N_\mathrm{ss}\) & Horizonte de truncamento do DMC   & 150   \\ \hline
+    \(Q\)             & Ponderação do erro da saída       & 1     \\ \hline
+    \(R\)             & Ponderação do esforço de controle & 10000 \\ \hline
+  \end{tabular}
+\end{table}
 Em seguida, a análise de saturação no \textit{duty cycle} é realizada com a execução das estratégias de controle preditivo sem restrições no sinal de controle. Por fim, avalia-se o efeito da ponderação no esforço de controle \(R\) e o efeito da variação do horizonte de predição nos controladores.
 
 \subsection{Simulação dos controladores com planta linearizada.}
 
-%TODO: Colocar figura e comentar resultados.
+A Figura \ref{fig:resp_linear} mostra a simulação do modelo linearizado com as três estratégias de controle preditivo abordadas. A referência é definida como 12 V e uma perturção constante com amplitude de 20\% da referência é aplicada ao sistema a partir da metade do intervalo de tempo. No segmento de referência, os três controladores apresentam respostas iguais, enquanto que, na rejeição de perturbação o DMC e o SSMPC apresentam o mesmo comportamento, visto que ambos utilizam um modelo de perturbação constante, e o GPC apresenta um sinal de controle mais agressivo, que devido às restrições aplicadas no sinal de controle, resultam numa rejeição de perturbação mais lenta que os outros controladores.
 
-A Figura mostra a simulação do modelo linearizado com as três estratégias de controle preditivo abordadas. A referência é definida como \(12_V\) e uma perturção constante com amplitude de 20\% da referência é aplicada ao sistema a partir da metade do intervalo de tempo. No segmento de referência, os três controladores apresentam respostas iguais, enquanto que, na rejeição de perturbação o DMC e o SSMPC apresentam o mesmo comportamento, visto que ambos utilizam um modelo de perturbação constante, e o GPC apresenta um sinal de controle mais agressivo, que devido às restrições aplicadas no sinal de controle, resultam numa rejeição de perturbação mais lenta que os outros controladores.
+\begin{figure}[htb]
+  \centering
+  \caption{Saída do modelo linearizado e sinais de controle.}
+  \includegraphics[width=0.7\textwidth]{Figs/Resposta Linear.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:resp_linear}
+\end{figure}
 
 \subsection{Simulação dos controladores com planta não linear.}
 
 Os controladores preditivos lineares desenvolvido neste trabalho são simulados com o modelo não linear da planta partindo do ponto de equilibrio \(U = 0,5\), \(V_C = 12\ \mathrm{V}\) e \(I_{Lm} = 0,25 \ \mathrm{A}\). O objetivo da simulação é avaliar o seguimento de referência e a rejeição de perturbações numa vizinhança do equilibrio. Em primeira instância, avalia-se a capacidade dos controladores seguirem uma referência de 14 V. Depois, avalia-se a capacidade de rejeição de uma perturbação constante na saída, com amplitude de 1 V.
 
-%TODO: Colocar e comentar figura sobre simulação não linear.
 
-A Figura exibe as respostas dos controladores com o modelo não linear do conversor. 
+A Figura \ref{fig:resp_nao_linear} exibe as respostas do modelo não linear do conversor com os controladores preditivos projetados. Em relação ao seguimento de referência, ambos o GPC e o SSMPC apresentam comportamento similar. Entretanto, a reposta do DMC é mais lenta e apresenta maior oscilação até atingir a acomodação. Na rejeição de perturbação, o GPC consegue trazer a tensão de saída de volta para a referência de 14 V, mais rapidamente do que o SSMPC e DMC. A oscilação presente no DMC também é exibida nesta situação.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Saída do modelo não linear e sinais de controle.}
+  \includegraphics[width=0.7\textwidth]{Figs/Resposta não Linear.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:resp_nao_linear}
+\end{figure}
 
 \subsection{Análise do controladores sem restrições e com saturação física.}
 

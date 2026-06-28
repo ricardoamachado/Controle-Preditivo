@@ -28,18 +28,20 @@ ref = 12;
 % Simulação Linear.
 figure(1);
 subplot(3,1,1);
-stairs(t, y_sim_gpc, 'k', 'LineWidth', 2); hold on;
-stairs(t, y_sim_dmc, 'b', 'LineWidth', 2); hold on;
-stairs(t, y_sim_mpc, 'g--', 'LineWidth', 3); hold on;
+stairs(t, y_sim_gpc, 'k', 'LineWidth', 2);
+hold on;
+stairs(t, y_sim_dmc, 'b', 'LineWidth', 2);
+stairs(t, y_sim_mpc, 'r--', 'LineWidth', 3);
 title('Tensão de saída');
 ylabel('Tensão (V)');
 grid on; 
 legend('GPC','DMC', 'SSMPC','Location', 'best');
 
 subplot(3,1,2);
-stairs(t, u_sim_gpc, 'k', 'LineWidth', 2); hold on;
-stairs(t, u_sim_dmc, 'b', 'LineWidth', 2); hold on;
-stairs(t, u_sim_mpc, 'g--', 'LineWidth', 2); hold on;
+stairs(t, u_sim_gpc, 'k', 'LineWidth', 2);
+hold on;
+stairs(t, u_sim_dmc, 'b', 'LineWidth', 2);
+stairs(t, u_sim_mpc, 'r--', 'LineWidth', 2);
 legend('GPC','DMC', 'SSMPC','Location', 'best')
 title('Ação de Controle (u)');
 xlabel('Tempo (s)');
@@ -47,9 +49,10 @@ ylabel('Duty Cycle');
 grid on;
 
 subplot(3,1,3);
-stairs(t, delta_u_sim_gpc, 'k', 'LineWidth', 2); hold on;
-stairs(t, delta_u_sim_dmc, 'b', 'LineWidth', 2); hold on;
-stairs(t, delta_u_sim_mpc, 'g--', 'LineWidth', 2); hold on;
+stairs(t, delta_u_sim_gpc, 'k', 'LineWidth', 2);
+hold on;
+stairs(t, delta_u_sim_dmc, 'b', 'LineWidth', 2);
+stairs(t, delta_u_sim_mpc, 'r--', 'LineWidth', 3);
 legend('GPC','DMC', 'SSMPC','Location', 'best')
 title('Incremento de controle (Δu)');
 xlabel('Tempo (s)');
@@ -59,26 +62,33 @@ grid on;
 % Simulação não Linear.
 figure(2);
 subplot(3,1,1);
-stairs(t, y_sim_nl_gpc, 'k', 'LineWidth', 2); hold on;
-stairs(t, y_sim_nl_dmc, 'b', 'LineWidth', 2); hold on;
-stairs(t, y_sim_nl_mpc, 'g--', 'LineWidth', 3); hold on;
+stairs(t, y_sim_nl_gpc, 'k', 'LineWidth', 2);
+hold on;
+stairs(t, y_sim_nl_dmc, 'b', 'LineWidth', 2);
+stairs(t, y_sim_nl_mpc, 'r--', 'LineWidth', 3);
 title('Tensão de saída');
 ylabel('Tensão (V)');
 grid on; 
 legend('GPC','DMC', 'SSMPC','Location', 'best');
 
 subplot(3,1,2);
-stairs(t, u_sim_nl_gpc, 'k', 'LineWidth', 2); hold on;
-stairs(t, u_sim_nl_dmc, 'b', 'LineWidth', 2); hold on;
-stairs(t, u_sim_nl_mpc, 'g--', 'LineWidth', 2); hold on;
+stairs(t, u_sim_nl_gpc, 'k', 'LineWidth', 2);
+hold on;
+stairs(t, u_sim_nl_dmc, 'b', 'LineWidth', 2);
+stairs(t, u_sim_nl_mpc, 'r--', 'LineWidth', 3);
 legend('GPC','DMC', 'SSMPC','Location', 'best')
 title('Ação de Controle (u)');
-xlabel('Tempo (s)'); ylabel('Duty Cycle'); grid on;
-subplot(3,1,3);
+xlabel('Tempo (s)');
+ylabel('Duty Cycle');
+grid on;
 
-stairs(t, delta_u_sim_nl_gpc, 'k', 'LineWidth', 1.5); hold on;
-stairs(t, delta_u_sim_nl_dmc, 'k', 'LineWidth', 1.5); hold on;
-stairs(t, delta_u_sim_nl_mpc, 'k', 'LineWidth', 1.5); hold on;
+subplot(3,1,3);
+stairs(t, delta_u_sim_nl_gpc, 'k', 'LineWidth', 2);
+hold on;
+stairs(t, delta_u_sim_nl_dmc, 'b', 'LineWidth', 2);
+stairs(t, delta_u_sim_nl_mpc, 'r--', 'LineWidth', 3)
 legend('GPC','DMC', 'SSMPC','Location', 'best')
 title('Incremento de controle (Δu)');
-xlabel('Tempo (s)'); ylabel('Amplitude'); grid on;
+xlabel('Tempo (s)');
+ylabel('Amplitude');
+grid on;
