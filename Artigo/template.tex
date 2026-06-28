@@ -13,7 +13,7 @@
 \usepackage{amsmath}
 \usepackage{lipsum}
 \usepackage{graphicx}
-\usepackage[brazil]{babel}
+\usepackage[brazilian]{babel}
 
 \title{Modelagem e controle de um conversor flyback por meio de estratégias de controle preditivo.}
 
@@ -167,6 +167,9 @@ A capacitância e a indutância do conversor são determinadas com base nas espe
 \subsection{Modelo linearizado do conversor.}
 
 O modelo linearizado do conversor em espaço de estados é obtido com a determinação do Jacobiano do sistema em relação aos estados e em relação à entrada, conforme descrito em \eqref{eq:jacobiano_estados} e \eqref{eq:jacobiano_saida}. O vetor de estados é representado por \(\mathbf{x}\), o vetor de estados no equilibrio por \(\mathbf{X}\) e o vetor de desvio dos estados em relação ao equilibrio por \(\mathbf{\hat{x}}\) (Eq. \eqref{eq:vetor_estados}).
+O ponto de equilibrio é descrito em \eqref{eq:ponto_equilibrio}.
+
+
 
 \begin{equation}A =
   \begin{bmatrix}
@@ -196,15 +199,24 @@ O modelo linearizado do conversor em espaço de estados é obtido com a determin
     I_{Lm} \\
     V_C
   \end{bmatrix}
-  \label{eq:vetor_estados} \qquad \mathbf{\hat{x}} = \begin{bmatrix}
+  \qquad \mathbf{\hat{x}} = \begin{bmatrix}
     \hat{i}_{Lm} \\
     \hat{v}_C
   \end{bmatrix} =  \begin{bmatrix}
     i_{Lm} - I_{Lm} \\
     v_C - V_C
   \end{bmatrix}
+  \label{eq:vetor_estados} 
 \end{equation}
 
+\begin{equation}
+  \mathbf{U} = 0,5 \qquad \mathbf{X} =
+  \begin{bmatrix}
+    0,25\ \mathrm{A} \\
+    12 \ \mathrm{V}
+  \end{bmatrix}
+  \label{eq:ponto_equilibrio}
+\end{equation}
 
 As matrizes \(A\) e \(B\) do modelo em espaço de estados linearizado são descritas em \eqref{eq:matriz_a} e \eqref{eq:matriz_b}. Ademais, a saída do conversor é a tensão no capacitor, o que resulta na matriz \(C\) dada por \eqref{eq:matriz_c}. O modelo linearizado do conversor é descrito por \eqref{eq:modelo_ss}, com o sinal de entrada \(u\) representando a razão cíclica \(d\).
 
@@ -332,15 +344,21 @@ Em seguida, a análise de saturação no \textit{duty cycle} é realizada com a 
 
 %TODO: Colocar figura e comentar resultados.
 
-A Figura mostra a simulação do modelo linearizado com as três estratégias de controle preditivo abordadas. A referência é definida como \(12_V\) e uma perturção constante com amplitude de 20\% da referência é aplicada ao sistema a partir da metade do intervalo de tempo.
+A Figura mostra a simulação do modelo linearizado com as três estratégias de controle preditivo abordadas. A referência é definida como \(12_V\) e uma perturção constante com amplitude de 20\% da referência é aplicada ao sistema a partir da metade do intervalo de tempo. No segmento de referência, os três controladores apresentam respostas iguais, enquanto que, na rejeição de perturbação o DMC e o SSMPC apresentam o mesmo comportamento, visto que ambos utilizam um modelo de perturbação constante, e o GPC apresenta um sinal de controle mais agressivo, que devido às restrições aplicadas no sinal de controle, resultam numa rejeição de perturbação mais lenta que os outros controladores.
 
 \subsection{Simulação dos controladores com planta não linear.}
+
+Os controladores preditivos lineares desenvolvido neste trabalho são simulados com o modelo não linear da planta partindo do ponto de equilibrio \(U = 0,5\), \(V_C = 12\ \mathrm{V}\) e \(I_{Lm} = 0,25 \ \mathrm{A}\). O objetivo da simulação é avaliar o seguimento de referência e a rejeição de perturbações numa vizinhança do equilibrio. Em primeira instância, avalia-se a capacidade dos controladores seguirem uma referência de 14 V. Depois, avalia-se a capacidade de rejeição de uma perturbação constante na saída, com amplitude de 1 V.
+
+%TODO: Colocar e comentar figura sobre simulação não linear.
+
+A Figura exibe as respostas dos controladores com o modelo não linear do conversor. 
 
 \subsection{Análise do controladores sem restrições e com saturação física.}
 
 \subsection{Efeito da variação da ponderação no esforço de controle.}
 
-... Nesta seção, avalia-se apenas a variação da poderação no esforço de controle , pois, visto que o sistema é SISO, reduzir a ponderação no controle equivale a aumentar a ponderação na saída e vice-versa.
+... Nesta seção, avalia-se apenas a variação da poderação no esforço de controle, pois, visto que o sistema é SISO, reduzir a ponderação no controle equivale a aumentar a ponderação na saída e vice-versa.
 
 \subsection{Efeito da variação do horizonte de predição.}
 
