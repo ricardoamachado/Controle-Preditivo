@@ -432,6 +432,34 @@ As Figuras \ref{fig:variacao_r_dmc}, \ref{fig:variacao_r_gpc} e \ref{fig:variaca
 
 \subsection{Efeito da variação do horizonte de predição.}
 
+A análise do efeito do horizonte de predição é realizada por meio da avaliação das respostas dos três controladores para os seguintes valores de \(N\) : 2, 5, 10, 20 e 40 amostras. Para simplificar a análise, considera-se que os horizontes de predição e de controle são iguais (\(N = N_u\)). Em
+
+As Figuras \ref{fig:variacao_n_dmc}, \ref{fig:variacao_n_gpc} e \ref{fig:variacao_n_ssmpc} mostram o efeito da variação do horizonte de predição para o DMC, o GPC e o SSMPC, respectivamente. Em geral, quanto menor é o valor de \(N\), maior é o sobressinal da saída e mais lenta é a resposta do sistema. No caso especifico do \(N = 2\), a resposta é extremamente lenta, de modo que a perturbação em 8 ms ocorre antes do sistema atingir o regime permanente. Nesse caso específico, não há sobressinal na saída e a perturbação auxilia o sistema a alcançar o regime permanente.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação do horizonte de predição no DMC.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação N DMC.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:variacao_n_dmc}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação do horizonte de predição no GPC.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação N GPC.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:variacao_n_gpc}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação do horizonte de predição no SSMPC.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação N SSMPC.pdf}
+  \\ \small Fonte: Autoral.
+  \label{fig:variacao_n_ssmpc}
+\end{figure}
+
 \subsection{Efeito da variação do horizonte de truncamento no DMC.}
 
 A análise do efeito do horizonte de truncamento no DMC é realizada variando o parâmetro entre 20, 50, 100 e 150 amostras conforme ilustrado na Figura \ref{fig:variacao_truncamento_dmc}. Conforme esperado, a redução do horizonte de truncamento faz o controlador não enxergar a parcela final do comportamento dinâmico da planta, o que causa oscilações na saída do sistema. Para \(N_\text{trunc} = 100\) há uma oscilação mínima em 4,5 ms, enquanto \(N_\text{trunc} = 50\) resulta numa oscilação perceptível a partir de 2 ms, que é dissipada ao longo do tempo. Por fim, para \(N_\text{trunc} = 20\), a resposta do sistema é complemente oscilatória ao longo do tempo.
