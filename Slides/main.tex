@@ -148,6 +148,137 @@
 
 \end{frame}
 
+\begin{frame}{Ponto de equilibrio do conversor.}
+
+    O vetor de estados é representado por \(\mathbf{x}\), o vetor de estados no equilibrio por \(\mathbf{X}\) e o vetor de desvio dos estados em relação ao equilibrio por \(\mathbf{\hat{x}}\) (Eq. \eqref{eq:vetor_estados}).
+    O ponto de equilibrio é descrito em \eqref{eq:ponto_equilibrio}.
+
+    \begin{equation}
+        \mathbf{x} = \begin{bmatrix}
+            i_{Lm} \\
+            v_C
+        \end{bmatrix}
+        \qquad   \mathbf{X} = \begin{bmatrix}
+            I_{Lm} \\
+            V_C
+        \end{bmatrix}
+        \qquad \mathbf{\hat{x}} = \begin{bmatrix}
+            \hat{i}_{Lm} \\
+            \hat{v}_C
+        \end{bmatrix} =  \begin{bmatrix}
+            i_{Lm} - I_{Lm} \\
+            v_C - V_C
+        \end{bmatrix}
+        \label{eq:vetor_estados}
+    \end{equation}
+
+    \begin{equation}
+        \mathbf{U} = 0,5 \qquad \mathbf{X} =
+        \begin{bmatrix}
+            0,25\ \mathrm{A} \\
+            12 \ \mathrm{V}
+        \end{bmatrix}
+        \label{eq:ponto_equilibrio}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{Modelo linearizado.}
+    \justifying
+    O modelo linearizado do conversor em espaço de estados (Eq. \eqref{eq:modelo_ss}) é obtido com a determinação do Jacobiano do sistema em relação aos estados e em relação à entrada. As matrizes \(A\), \(B\) e \(C\) do modelo são descritas em \eqref{eq:matriz_a}, \eqref{eq:matriz_b} e \eqref{eq:matriz_c}.
+
+    \begin{equation}
+        A =
+        \begin{bmatrix}
+            0                     & - \frac{1-D}{n\cdot L_m} \\ \\
+            \frac{1-D}{n \cdot C} & -\frac{1}{R C}
+        \end{bmatrix}
+        \label{eq:matriz_a}
+    \end{equation}
+
+    \begin{equation}
+        B =
+        \begin{bmatrix}
+            \frac{V_c}{n \cdot L_m} + \frac{V_s}{L_m} \\ \\
+            \frac{- I_{Lm}}{n \cdot C}
+        \end{bmatrix}
+        \label{eq:matriz_b}
+    \end{equation}
+
+    \begin{equation}
+        C = \begin{bmatrix}
+            0 & 1
+        \end{bmatrix}
+        \label{eq:matriz_c}
+    \end{equation}
+
+    \begin{equation}
+        \begin{cases}
+            \frac{d \mathbf{\hat{x}}}{d t} = A\ \mathbf{\hat{x}} + B\ \hat{u} \\
+            \hat{y} = C\ \mathbf{\hat{x}}
+        \end{cases}
+        \label{eq:modelo_ss}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{Modelo linearizado - Valores numéricos.}
+    \justifying
+    Os valores numéricos para as matrizes do modelo em espaço de estados são descritas em \eqref{eq:matriz_a_num}, \eqref{eq:matriz_b_num} e \eqref{eq:matriz_c_num}.
+
+    \begin{equation}
+        A =
+        \begin{bmatrix}
+            0     & -312,50 \\
+            96000 & -2000
+        \end{bmatrix}
+        \label{eq:matriz_a_num}
+    \end{equation}
+
+    \begin{equation}
+        B =
+        \begin{bmatrix}
+            15000 \\
+            -48000
+        \end{bmatrix}
+        \label{eq:matriz_b_num}
+    \end{equation}
+
+    \begin{equation}
+        C = \begin{bmatrix}
+            0 & 1
+        \end{bmatrix}
+        \label{eq:matriz_c_num}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{Validação do modelo linearizado.}
+
+    A validação do modelo linearizado é realizado através da comparação entre a simulação de \textit{AC Sweep} do conversor para uma perturbação senoidal no \textit{duty cycle} (Fig. \ref{fig:diagrama_sim}) e a resposta em frequência do modelo linearizado. A perturbação senoidal tem amplitude de 0,01 e frequência variável entre 100 Hz e 10 kHz.
+
+    \begin{figure}[htb]
+        \centering
+        \caption{Diagrama da simulação \textit{AC Sweep} realizada no PSIM.}
+        \includegraphics[width=0.45\textwidth]{Figs/Diagrama Simulação.png}
+        \label{fig:diagrama_sim}
+    \end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Validação do modelo linearizado.}
+
+    A Figura \ref{fig:comp_resp_freq} ilustra a comparação entre a simulação de \textit{AC Sweep} do conversor e a reposta em frequência do modelo linearizado.
+
+    \begin{figure}[htb]
+        \centering
+        \caption{Comparação entre simulação AC e resposta em frequência do modelo.}
+        \includegraphics[width=0.55\textwidth]{Figs/Valid Modelo.pdf}
+        \label{fig:comp_resp_freq}
+    \end{figure}
+
+\end{frame}
+
 \begin{frame}[allowframebreaks, noframenumbering]
     \frametitle{Referências}
     \printbibliography
