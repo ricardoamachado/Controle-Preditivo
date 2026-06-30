@@ -323,10 +323,67 @@ A Figura \ref{fig:comp_resp_freq} ilustra a comparação entre a simulação de 
 
 \subsection{MPC em espaço de estados (SSMPC).}
 
-\subsection{Generalized Matrix Control (GPC)}
+O controle preditivo em espaço de estados (SSMPC) utiliza o modelo de sistema linear e invariante no tempo em espaço de estados para realizar as predições futuras( Eq. \eqref{eq:ss_discreto}). Para garantir rejeição de perturbações constantes e erro nulo em regime permanente para uma entrada degrau é necessário aumentar o modelo do sistema com a ação integral conforme descrito nos livros \cite{Wang2009} e \cite{Maciejowski2001}. O vetor de estados aumentado é dado por \eqref{eq:estados_aug} e as matrizes aumentadas são definidas em \eqref{eq:matrizes_aug}. O sistema aumentado é descrito por
 
-\subsection{Dynamic Matrix Control (DMC)}
+\begin{equation}
+  \begin{cases}
+    \mathbf{x}_{k+1} = A \mathbf{x}_k + B \mathbf{u}_k \\
+    \mathbf{y}_k = C \mathbf{x}_k
+  \end{cases}
+    \label{eq:ss_discreto}
+\end{equation}
 
+\begin{equation}
+  \mathbf{\xi}_k = \begin{bmatrix}
+    \mathbf{\Delta x}_k \\
+    \mathbf{y}_k
+  \end{bmatrix}
+  \label{eq:estados_aug}
+\end{equation}
+
+\begin{equation}
+  A_\mathrm{aug} = \begin{bmatrix}
+    A & \mathbf{0} \\
+    C A & \mathbf{I}
+  \end{bmatrix} \qquad 
+    B_\mathrm{aug} = \begin{bmatrix}
+      B \\
+      C B
+    \end{bmatrix} \qquad
+    C_\mathrm{aug} = \begin{bmatrix}
+      \mathbf{0} & \mathbf{I}
+    \end{bmatrix}
+    \label{eq:matrizes_aug}
+\end{equation}
+
+\subsection{Generalized Matrix Control (GPC).}
+
+Nesta subseção, a função de transferência da planta a ser controlada é dada por \eqref{eq:func_transf_gpc}.
+
+\begin{equation}
+  Y(z^{-1}) = \frac{z^{-1}B(z^{-1})}{A(z^{-1})}
+  \label{eq:func_transf_gpc}
+\end{equation}
+
+O Generalized Matrix Control (GPC) é uma estratégia de controle preditivo baseada no modelo de predição CARIMA descrito em \eqref{eq:carima}. A perturbação \(e(k)\) é descrita como um ruído branco aditivo com média nula.
+
+\begin{equation}
+  A(z^{-1}) y(k) = B(z^{-1}) u(k-1) + C(z{-1}) \frac{e(k)}{1 - z^{-1}}
+  \label{eq:carima}
+\end{equation}
+
+No GPC, a determinação das predições futuras pode ser realizada pela solução da equação Diofantina
+
+\subsection{Dynamic Matrix Control (DMC).}
+
+O Dynamic Matrix Control é uma estratégia de controle preditivo baseada no modelo de predição convolucional (Eq. \eqref{eq:pred_dmc}), que pode ser implementada sem a obtenção da função de transferência da planta, pois depende somente dos coeficientes da resposta ao degrau \(g_i\) \cite{Julio2024}. O modelo de perturbação adotado consiste em \(\eta(k) = \text{constante}\) para todo k.
+
+\begin{equation}
+  \hat{y}(k + j | k) = \sum_{i=1}^{\infty} g_i \Delta u(k+j-i) + \eta (k + j | k)
+  \label{eq:pred_dmc}
+\end{equation}
+
+Embora o somatório em \eqref{eq:pred_dmc} dependa de infinitos termos, caso o sistema seja estável, a resposta ao degrau fica constante após um determinado intervalo de tempo. Portanto, para sistemas estáveis em malha aberta, é possível truncar o limite superior do somatório em \(N_\text{trunc}\) amostras, desde que \(g_{j+i} - g_i \approx 0,\ \forall i > N_\text{trunc}\) \cite{Julio2024}.
 
 
 \section{Resultados.}
