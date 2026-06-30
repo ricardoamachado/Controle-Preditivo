@@ -385,10 +385,110 @@
         \centering
         \caption{Saída do modelo não linear e sinais de controle.}
         \includegraphics[width=0.65\textwidth]{Figs/Resposta não Linear.pdf}
-        \\ \small Fonte: Autoral.
         \label{fig:resp_nao_linear}
     \end{figure}
 
+\end{frame}
+
+\begin{frame}{Resultados - Análise da saturação.}
+    \justifying
+    Para visualizar melhor o efeito da saturação física nos controladores, reduz-se a ponderação do esforço de controle para \(R = 300\) e analisa-se as respostas do sistema. As respostas do sistema com os controladores restritos são exibidas na Figura \ref{fig:resp_com_restricoes}. O valor máximo da tensão de saída durante a rejeição de perturbação com o GPC é de 16,87 V.
+    \begin{figure}[h]
+        \centering
+        \caption{Respostas do modelo linearizado para os controladores com restrições.}
+        \includegraphics[width=0.6\textwidth]{Figs/Resp Linear R 300 Com Restrições.pdf}
+        \label{fig:resp_com_restricoes}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Resultados - Análise da saturação.}
+    \justifying
+    No caso da rejeição de perturbação sem restrições, visto na Figura \ref{fig:resp_sem_restricoes}, o otimizador encontra valores de incremento de controle que resultariam num sinal de controle fora do intervalo entre 0 e 1 para o GPC. Dessa forma, a rejeição de perturbação do GPC é extremamente lenta e observa-se uma tensão máxima de 23,79 V na saída do conversor.
+    \begin{figure}[h]
+        \centering
+        \caption{Respostas do modelo linearizado para os controladores irrestritos.}
+        \includegraphics[width=0.6\textwidth]{Figs/Resp Linear R 300 Sem Restrições.pdf}
+        \label{fig:resp_sem_restricoes}
+    \end{figure}
+
+\end{frame}
+
+\begin{frame}{Resultados - Variação em \(R\) - GPC}
+    \justifying
+    A Figura \ref{fig:variacao_r_gpc} mostra o efeito da variação do parâmetro \(R\) para o GPC.
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação da ponderação do esforço de controle no GPC.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação R GPC.pdf}
+        \label{fig:variacao_r_gpc}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Resultados - Variação em \(R\) - DMC}
+    \justifying
+    A Figura \ref{fig:variacao_r_dmc} mostra o efeito da variação do parâmetro \(R\) para o DMC.
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação da ponderação do esforço de controle no DMC.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação R DMC.pdf}
+        \label{fig:variacao_r_dmc}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Resultados - Variação em \(R\) - SSMPC}
+    \justifying
+    A Figura \ref{fig:variacao_r_ssmpc} mostra o efeito da variação do parâmetro \(R\) para o SSMPC. Nos três casos, um valor menor de R resulta numa resposta ao degrau mais veloz e uma rejeição de perturbações mais rápida, no entanto, o sinal de controle atinge valores maiores.
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação da ponderação do esforço de controle no SSMPC.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação R SSMPC.pdf}
+        \label{fig:variacao_r_ssmpc}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Resultados - Variação em \(N\) - GPC}
+    \justifying
+    A Figura \ref{fig:variacao_n_gpc} mostra o efeito da variação do parâmetro \(N\) para o GPC.
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação do horizonte de predição no GPC.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação N GPC.pdf}
+        \label{fig:variacao_n_gpc}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Resultados - Variação em \(N\) - DMC}
+    \justifying
+    A Figura \ref{fig:variacao_n_dmc} mostra o efeito da variação do parâmetro \(N\) para o DMC.
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação da ponderação do esforço de controle no DMC.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação N DMC.pdf}
+        \label{fig:variacao_n_dmc}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Resultados - Variação em \(N\) - SSMPC}
+    \justifying
+    A Figura \ref{fig:variacao_n_ssmpc} mostra o efeito da variação do parâmetro \(N\) para o SSMPC. Em geral, quanto menor é o valor de \(N\), maior é o sobressinal da saída e mais lenta é a resposta do sistema.
+
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação do horizonte de predição no SSMPC.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação N SSMPC.pdf}
+        \label{fig:variacao_n_ssmpc}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Resultados - Variação no horizonte de truncamento do DMC.}
+    \justifying
+    A redução do horizonte de truncamento faz o controlador não enxergar a parcela final do comportamento dinâmico da planta, o que causa oscilações na saída do sistema conforme visto na Figura \ref{fig:variacao_truncamento_dmc}.
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação do horizonte de truncamento.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação N truncamento.pdf}
+        \label{fig:variacao_truncamento_dmc}
+    \end{figure}
 \end{frame}
 
 \begin{frame}[allowframebreaks, noframenumbering]

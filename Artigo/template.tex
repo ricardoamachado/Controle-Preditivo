@@ -496,7 +496,7 @@ A Figura \ref{fig:resp_nao_linear} exibe as respostas do modelo não linear do c
 
 Para visualizar melhor o efeito da saturação física nos controladores, reduz-se a ponderação do esforço de controle para \(R = 300\) e analisa-se as respostas dos sistemas com e sem restrições. As respostas do sistema com os controladores restritos são exibidas na Figura \ref{fig:resp_com_restricoes}, devido a rejeição de pertubação mais agressiva do GPC, o otimizador encontra valores maiores, em módulo, para o incremento de controle. Entretanto, devido as restrições, os incrementos de controle sempre fazem o \textit{duty cycle} variar no intervalo de 0 e 1. O valor máximo da tensão de saída durante a rejeição de perturbação com o GPC é de 16,87 V.
 
-No caso da rejeição de perturbação sem restrições, visto na Figura \ref{fig:resp_sem_restricoes}, o otimizador encontra valores de incremento de controle que resultariam num sinal de controle fora do intervalo entre 0 e 1 para o GPC, no entanto, devido à saturação física no \textit{duty cycle}, o sinal de controle oscila durante 7 períodos de amostragem entre 0 e 1. Dessa forma, a rejeição de perturbação é do GPC é extremamente lenta e observa-se uma tensão máxima de 23,79 V na saída do conversor.
+No caso da rejeição de perturbação sem restrições, visto na Figura \ref{fig:resp_sem_restricoes}, o otimizador encontra valores de incremento de controle que resultariam num sinal de controle fora do intervalo entre 0 e 1 para o GPC, no entanto, devido à saturação física no \textit{duty cycle}, o sinal de controle oscila durante 7 períodos de amostragem entre 0 e 1. Dessa forma, a rejeição de perturbação do GPC é extremamente lenta e observa-se uma tensão máxima de 23,79 V na saída do conversor.
 
 \begin{figure}[h]
   \centering
@@ -547,7 +547,7 @@ As Figuras \ref{fig:variacao_r_dmc}, \ref{fig:variacao_r_gpc} e \ref{fig:variaca
 
 \subsection{Efeito da variação do horizonte de predição.}
 
-A análise do efeito do horizonte de predição é realizada por meio da avaliação das respostas dos três controladores para os seguintes valores de \(N\) : 2, 5, 10, 20 e 40 amostras. Para simplificar a análise, considera-se que os horizontes de predição e de controle são iguais (\(N = N_u\)). Em
+A análise do efeito do horizonte de predição é realizada por meio da avaliação das respostas dos três controladores para os seguintes valores de \(N\) : 2, 5, 10, 20 e 40 amostras. Para simplificar a análise, considera-se que os horizontes de predição e de controle são iguais (\(N = N_u\)).
 
 As Figuras \ref{fig:variacao_n_dmc}, \ref{fig:variacao_n_gpc} e \ref{fig:variacao_n_ssmpc} mostram o efeito da variação do horizonte de predição para o DMC, o GPC e o SSMPC, respectivamente. Em geral, quanto menor é o valor de \(N\), maior é o sobressinal da saída e mais lenta é a resposta do sistema. No caso especifico do \(N = 2\), a resposta é extremamente lenta, de modo que a perturbação em 8 ms ocorre antes do sistema atingir o regime permanente. Nesse caso específico, não há sobressinal na saída e a perturbação auxilia o sistema a alcançar o regime permanente.
 
