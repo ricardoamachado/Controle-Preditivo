@@ -319,11 +319,9 @@ A Figura \ref{fig:comp_resp_freq} ilustra a comparação entre a simulação de 
 
 \section{Estratégias de controle preditivo utilizadas.}
 
-%TODO: Definir o MPC.
-
 \subsection{MPC em espaço de estados (SSMPC).}
 
-O controle preditivo em espaço de estados (SSMPC) utiliza o modelo de sistema linear e invariante no tempo em espaço de estados para realizar as predições futuras( Eq. \eqref{eq:ss_discreto}). Para garantir rejeição de perturbações constantes e erro nulo em regime permanente para uma entrada degrau é necessário aumentar o modelo do sistema com a ação integral conforme descrito nos livros \cite{Wang2009} e \cite{Maciejowski2001}. O vetor de estados aumentado é dado por \eqref{eq:estados_aug} e as matrizes aumentadas são definidas em \eqref{eq:matrizes_aug}. O sistema aumentado é descrito por
+O controle preditivo em espaço de estados (SSMPC) utiliza o modelo de sistema linear e invariante no tempo em espaço de estados para realizar as predições futuras (Eq. \eqref{eq:ss_discreto}). Para garantir rejeição de perturbações constantes e erro nulo em regime permanente para uma entrada degrau é necessário aumentar o modelo do sistema com a ação integral conforme descrito nos livros \cite{Wang2009} e \cite{Maciejowski2001}. O vetor de estados aumentado é dado por \eqref{eq:estados_aug} e as matrizes aumentadas são definidas em \eqref{eq:matrizes_aug}. O sistema aumentado é descrito por \eqref{eq:ss_discreto_aug}.
 
 \begin{equation}
   \begin{cases}
@@ -356,6 +354,15 @@ O controle preditivo em espaço de estados (SSMPC) utiliza o modelo de sistema l
     \label{eq:matrizes_aug}
 \end{equation}
 
+
+\begin{equation}
+  \begin{cases}
+    \mathbf{\xi}_{k+1} = A_\mathrm{aug}\ \mathbf{\xi}_{k}+ B_\mathrm{aug}\ \mathbf{u}_k \\
+    \mathbf{y}_k = C_\mathrm{aug}\ \mathbf{\xi}_{k+1}
+  \end{cases}
+  \label{eq:ss_discreto_aug}
+\end{equation}
+
 \subsection{Generalized Matrix Control (GPC).}
 
 Nesta subseção, a função de transferência da planta a ser controlada é dada por \eqref{eq:func_transf_gpc}.
@@ -365,14 +372,19 @@ Nesta subseção, a função de transferência da planta a ser controlada é dad
   \label{eq:func_transf_gpc}
 \end{equation}
 
-O Generalized Matrix Control (GPC) é uma estratégia de controle preditivo baseada no modelo de predição CARIMA descrito em \eqref{eq:carima}. A perturbação \(e(k)\) é descrita como um ruído branco aditivo com média nula.
+O Generalized Matrix Control (GPC) é uma estratégia de controle preditivo baseada no modelo de predição CARIMA descrito em \eqref{eq:carima}. A perturbação \(e(k)\) é descrita como um ruído branco aditivo com média nula. O polinômio \(C(z{-1})\) é um parâmetro de sintonia que permite lidar com peturbações na forma de ruído colorido \cite{Camacho2004}. Neste trabalho, considera-se \(C(z{-1}) = 1\).
 
 \begin{equation}
-  A(z^{-1}) y(k) = B(z^{-1}) u(k-1) + C(z{-1}) \frac{e(k)}{1 - z^{-1}}
+  A(z^{-1}) y(k) = B(z^{-1}) u(k-1) + C(z^{-1}) \frac{e(k)}{1 - z^{-1}}
   \label{eq:carima}
 \end{equation}
 
-No GPC, a determinação das predições futuras pode ser realizada pela solução da equação Diofantina
+No GPC com \(C(z^{-1}) = 1\), a determinação das predições futuras pode ser realizada pela solução da equação Diofantina \eqref{eq:diofantina} \cite{Julio2024}.
+
+\begin{equation}
+  1 = E_j(z^{-1}) (1-z^{-1})A(z^{-1}) + z^{-j} \cdot F_j(z^{-1})
+  \label{eq:diofantina}
+\end{equation}
 
 \subsection{Dynamic Matrix Control (DMC).}
 
@@ -531,6 +543,12 @@ A análise do efeito do horizonte de truncamento no DMC é realizada variando o 
 \end{figure}
 
 \section{Conclusões.}
+
+As estratégias de controle preditivo GPC, DMC e SSMPC demonstraram desempenho satisfatório no controle do conversor flyback em modo de condução contínua, tanto no caso do modelo linearizado, quanto no caso do modelo não linear próximo ao ponto de equilibrio.
+
+A incorporação de restrições no controle preditivo, permite que o incremento de controle calculado sempre resulte num \textit{duty cycle} entre 0 e 1, evitando a saturação do sinal de controle e o efeito \textit{wind-up}. Ademais, a ponderação no esforço de controle fornece uma relação de compromisso entre velocidade da resposta e agressividade do controle na sintonia do controlador.
+
+Em relação aos outros parâmetros de sintonia, reduzir o horizonte de predição diminui o esforço computacional utilizado no controlador preditivo, mas ao mesmo tempo, aumenta as oscilações na saida e diminui a velocidade da resposta.Um horizonte de truncamento curto no DMC diminui o número de coeficientes que precisam ser armazenados, entretanto, causa oscilações na resposta, inclusive havendo a possilidade da resposta ser instável.
 
 \bibliographystyle{unsrt}
 \bibliography{references}
