@@ -279,6 +279,118 @@
 
 \end{frame}
 
+\begin{frame}{Restrições implementadas.}
+
+    \justifying
+
+    Uma das principais vantagens das estratégias de controle preditivo em relação ao controle clássico é a possilidade de incorporar diretamente restrições no problema de controle. No caso de um conversor chaveado, o sinal de controle (razão cíclica) é restrito fisicamente \(0 \leq u \leq 1\).
+
+    No entanto, a variável otimizada é o incremento de controle, portanto, todas as restrições precisam ser escritas em função do \(\Delta u\).
+
+\end{frame}
+
+\begin{frame}{Restrições implementadas.}
+
+    \justifying
+    Na forma matricial, a restrição no sinal de controle é dada por \eqref{eq:restricao_controle}. \(N_u\). A transformação das restrições é realizada por \eqref{eq:transf_restricao}, em que M é uma matriz triangular inferior, com todos os termos não nulos iguais a 1 e \(\mathbf{1}_{N_u}\) é um vetor pertencente ao \(\mathbb{R}^{N_u}\) com todos os termos iguais a 1.
+
+    \begin{equation} \mathbf{F}_u \vec{u} \leq \mathbf{g}_u \Rightarrow
+        \begin{bmatrix}
+            1      & 0      & \cdots & 0      \\
+            0      & 1      & \cdots & 0      \\
+            \vdots & \vdots & \ddots & \vdots \\
+            0      & 0      & \cdots & 1      \\
+            -1     & 0      & \cdots & 0      \\
+            0      & -1     & \cdots & 0      \\
+            \vdots & \vdots & \ddots & \vdots \\
+            0      & 0      & \cdots & -1
+        \end{bmatrix}
+        \begin{bmatrix}
+            u(k)       \\
+            u(k+1)     \\
+            \vdots     \\
+            u(k+N_u-1) \\
+            u(k)       \\
+            u(k+1)     \\
+            \vdots     \\
+            u(k+N_u-1)
+        \end{bmatrix}
+        \le
+        \begin{bmatrix}
+            1      \\
+            1      \\
+            \vdots \\
+            1      \\
+            0      \\
+            0      \\
+            \vdots \\
+            0
+        \end{bmatrix}
+        \label{eq:restricao_controle}
+    \end{equation}
+
+    \begin{equation}
+        \mathbf{F}_u M \vec{\Delta u} \leq \mathbf{g}_u -\mathbf{F}_u u(k - 1)\cdot \mathbf{1}_{N_u}
+        \label{eq:transf_restricao}
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{Resultados.}
+
+    \begin{itemize}
+        \item Os controladores GPC, DMC e o SSMPC são avaliados tanto no controle do modelo linearizado, quanto no controle da planta não linear em torno do ponto de equilibrio.
+        \item Avalia-se o desempenho dos três controladores nas tarefas de seguimento de referência e rejeição de perturbação constante.
+        \item Os parâmetros de sintonia utilizados são listados na Tabela \ref{tab:sintonia_controladores}.
+        \item As simulações são executadas num intervalo de 200 amostras, o que implica num intervalo de tempo entre 0 e 8 ms.
+    \end{itemize}
+
+    \begin{table}[h]
+        \centering
+        \caption{Parâmetros de sintonia dos controladores.}
+        \label{tab:sintonia_controladores}
+        \begin{tabular}{|l|l|l|}
+            \hline
+            Notação              & Nome do parâmetro                 & Valor \\ \hline
+            \(N\)                & Horizonte de predição             & 50    \\ \hline
+            \(N_u\)              & Horizonte de controle             & 50    \\ \hline
+            \(N_\mathrm{trunc}\) & Horizonte de truncamento do DMC   & 150   \\ \hline
+            \(Q\)                & Ponderação do erro da saída       & 1     \\ \hline
+            \(R\)                & Ponderação do esforço de controle & 10000 \\ \hline
+        \end{tabular}
+    \end{table}
+
+    \
+
+\end{frame}
+
+\begin{frame}{Resultados - Modelo Linearizado.}
+    \justifying
+    A Figura \ref{fig:resp_linear} mostra a simulação do modelo linearizado. A referência é definida como 12 V e uma perturção constante com amplitude de 20\% da referência é aplicada ao sistema a partir da metade do intervalo de tempo.
+
+    \begin{figure}[htb]
+        \centering
+        \caption{Saída do modelo linearizado e sinais de controle.}
+        \includegraphics[width=0.65\textwidth]{Figs/Resposta Linear.pdf}
+        \label{fig:resp_linear}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}{Resultados - Modelo não Linear.}
+    \justifying
+    A simulação dos controladores com o modelo não linear é exibida na Figura \ref{fig:resp_nao_linear}. Avalia-se a capacidade dos controladores seguirem uma referência de 14 V e a capacidade de rejeição de uma perturbação constante na saída, com amplitude de 1 V.
+
+    \begin{figure}[htb]
+        \centering
+        \caption{Saída do modelo não linear e sinais de controle.}
+        \includegraphics[width=0.65\textwidth]{Figs/Resposta não Linear.pdf}
+        \\ \small Fonte: Autoral.
+        \label{fig:resp_nao_linear}
+    \end{figure}
+
+\end{frame}
+
 \begin{frame}[allowframebreaks, noframenumbering]
     \frametitle{Referências}
     \printbibliography
