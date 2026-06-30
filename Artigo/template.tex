@@ -397,6 +397,52 @@ O Dynamic Matrix Control é uma estratégia de controle preditivo baseada no mod
 
 Embora o somatório em \eqref{eq:pred_dmc} dependa de infinitos termos, caso o sistema seja estável, a resposta ao degrau fica constante após um determinado intervalo de tempo. Portanto, para sistemas estáveis em malha aberta, é possível truncar o limite superior do somatório em \(N_\text{trunc}\) amostras, desde que \(g_{j+i} - g_i \approx 0,\ \forall i > N_\text{trunc}\) \cite{Julio2024}.
 
+\subsection{Restrições implementadas.}
+
+Uma das principais vantagens das estratégias de controle preditivo em relação ao controle clássico é a possilidade de incorporar diretamente restrições no problema de controle. No caso de um conversor chaveado, o sinal de controle (razão cíclica) é restrito entre 0 e 1. Dessa forma, na implementação dos controladores, considera-se a restrição \(0 \leq u \leq 1\).
+
+Na forma matricial, a restrição é dada por \eqref{eq:restricao_controle} para um horizonte de controle \(N_u\). No entanto, a variável otimizada é o incremento de controle, portanto, todas as restrições precisam ser escritas em função do \(\Delta u\). A transformação das restrições é realizada por \eqref{eq:transf_restricao}, em que M é uma matriz triangular inferior, com todos os termos não nulos iguais a 1 e \(\mathbf{1}_{N_u}\) é um vetor pertencente ao \(\mathbb{R}^{N_u}\) com todos os termos iguais a 1.
+
+\begin{equation} \mathbf{F}_u \vec{u} \leq \mathbf{g}_u \Rightarrow
+  \begin{bmatrix}
+    1      & 0      & \cdots & 0      \\
+    0      & 1      & \cdots & 0      \\
+    \vdots & \vdots & \ddots & \vdots \\
+    0      & 0      & \cdots & 1      \\
+    -1     & 0      & \cdots & 0      \\
+    0      & -1     & \cdots & 0      \\
+    \vdots & \vdots & \ddots & \vdots \\
+    0      & 0      & \cdots & -1
+  \end{bmatrix}
+  \begin{bmatrix}
+    u(k)       \\
+    u(k+1)     \\
+    \vdots     \\
+    u(k+N_u-1) \\
+    u(k)       \\
+    u(k+1)     \\
+    \vdots     \\
+    u(k+N_u-1)
+  \end{bmatrix}
+  \le
+  \begin{bmatrix}
+    1      \\
+    1      \\
+    \vdots \\
+    1      \\
+    0      \\
+    0      \\
+    \vdots \\
+    0
+  \end{bmatrix}
+  \label{eq:restricao_controle}
+\end{equation}
+
+\begin{equation}
+  \mathbf{F}_u M \vec{\Delta u} \leq \mathbf{g}_u -\mathbf{F}_u u(k - 1)\cdot \mathbf{1}_{N_u}
+  \label{eq:transf_restricao}
+\end{equation}
+
 
 \section{Resultados.}
 
