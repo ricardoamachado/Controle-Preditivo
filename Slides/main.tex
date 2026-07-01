@@ -267,7 +267,7 @@
 
 
 \begin{frame}{Validação do modelo linearizado.}
-
+    \justifying
     A Figura \ref{fig:comp_resp_freq} ilustra a comparação entre a simulação de \textit{AC Sweep} do conversor e a reposta em frequência do modelo linearizado.
 
     \begin{figure}[htb]
@@ -276,6 +276,32 @@
         \includegraphics[width=0.55\textwidth]{Figs/Valid Modelo.pdf}
         \label{fig:comp_resp_freq}
     \end{figure}
+
+\end{frame}
+
+\begin{frame}{Discretização do modelo linearizado.}
+    O modelo do sistema é discretizado por meio do retentor de ordem zero (ZOH) (Eqs. \eqref{eq:modelo_disc_ss} e \eqref{eq:matrizes_numericas_disc}). A frequência de amostragem utilizada (\(f_\mathrm{sample} = 25 \text{kHz}\)) é metade da frequência de chaveamento do conversor.
+
+    \begin{equation}
+        \begin{cases}
+            \mathbf{\hat{x}}_{k+1} = A_d \ \mathbf{\hat{x}}_k + B_d \  \hat{u}_k \\ \\
+            \hat{y}_k = C \mathbf{\hat{x}}_k
+        \end{cases}
+        \label{eq:modelo_disc_ss}
+    \end{equation}
+
+    \begin{equation}
+        A_d =
+        \begin{bmatrix}
+            0,976720 & -0,011917 \\
+            3,660966 & 0,900450
+        \end{bmatrix} \qquad   B_d =
+        \begin{bmatrix}
+            0,606945 \\
+            -0,713054
+        \end{bmatrix}
+        \label{eq:matrizes_numericas_disc}
+    \end{equation}
 
 \end{frame}
 
