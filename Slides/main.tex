@@ -47,7 +47,6 @@
     \justifying
     O conversor flyback é um conversor de corrente contínua extremamente popular em fontes chaveadas (SMPS) de baixa potência \cite{Picard2010}.
 
-    A operação do conversor flyback consiste em armazenar energia na indutância de magnetização do transformador enquanto a chave conduz corrente e, em seguida, transferir essa energia armazenada para a saída enquanto a chave está aberta.
     \begin{figure}[h]
         \centering
         \caption{Diagrama de circuito do conversor flyback.}
@@ -116,24 +115,6 @@
 
 \begin{frame}{Dimensionamento do conversor.}
     \justifying
-    As expressões para a tensão média no capacitor e para a corrente média no indutor, dadas por \eqref{eq:tensao_media} e \eqref{eq:corrente_media}, são obtidas por meio do balanço Volt-Segundo no indutor e do balanço de carga no capacitor, respectivamente.
-    Para as tensões nominais definidas no projeto do conversor, a razão cíclica de equilibrio obtida é \(D = 0,5\).
-
-    \begin{equation}
-        V_\mathrm{C} = \frac{n V_s D}{(1 - D)} \Rightarrow V_\mathrm{C} = 12 \ \mathrm{V}
-        \label{eq:tensao_media}
-    \end{equation}
-
-    \begin{equation}
-        I_\mathrm{Lm} = \frac{n V_c}{R \cdot (1-D)} \Rightarrow  I_\mathrm{Lm} = 0,25 \ \mathrm{A}
-        \label{eq:corrente_media}
-    \end{equation}
-
-
-\end{frame}
-
-\begin{frame}{Dimensionamento do conversor.}
-    \justifying
     A capacitância e a indutância do conversor são determinadas com base nas especificações do ripple de tensão e ripple de corrente \cite{Erickson2020}, respectivamente, conforme \eqref{eq:capacitor_flyback} e \eqref{eq:indutor_flyback}.
 
     \begin{equation}
@@ -148,31 +129,22 @@
 
 \end{frame}
 
-\begin{frame}{Ponto de equilibrio do conversor.}
-
-    O vetor de estados é representado por \(\mathbf{x}\), o vetor de estados no equilibrio por \(\mathbf{X}\) e o vetor de desvio dos estados em relação ao equilibrio por \(\mathbf{\hat{x}}\) (Eq. \eqref{eq:vetor_estados}).
-    O ponto de equilibrio é descrito em \eqref{eq:ponto_equilibrio}.
+\begin{frame}{Dimensionamento do conversor.}
+\justifying
+As expressões para a tensão média no capacitor e para a corrente média no indutor são dadas por \eqref{eq:tensao_media} e \eqref{eq:corrente_media}, respectivamente.
+Para as tensões nominais definidas no projeto do conversor, a razão cíclica de equilibrio obtida é \(D = 0,5\). O ponto de equilibrio é descrito em \eqref{eq:ponto_equilibrio}.
 
     \begin{equation}
-        \mathbf{x} = \begin{bmatrix}
-            i_{Lm} \\
-            v_C
-        \end{bmatrix}
-        \qquad   \mathbf{X} = \begin{bmatrix}
-            I_{Lm} \\
-            V_C
-        \end{bmatrix}
-        \qquad \mathbf{\hat{x}} = \begin{bmatrix}
-            \hat{i}_{Lm} \\
-            \hat{v}_C
-        \end{bmatrix} =  \begin{bmatrix}
-            i_{Lm} - I_{Lm} \\
-            v_C - V_C
-        \end{bmatrix}
-        \label{eq:vetor_estados}
+        V_\mathrm{C} = \frac{n V_s D}{(1 - D)} \Rightarrow V_\mathrm{C} = 12 \ \mathrm{V}
+        \label{eq:tensao_media}
     \end{equation}
 
     \begin{equation}
+        I_\mathrm{Lm} = \frac{n V_c}{R \cdot (1-D)} \Rightarrow  I_\mathrm{Lm} = 0,25 \ \mathrm{A}
+        \label{eq:corrente_media}
+    \end{equation}
+
+        \begin{equation}
         \mathbf{U} = 0,5 \qquad \mathbf{X} =
         \begin{bmatrix}
             0,25\ \mathrm{A} \\
@@ -180,6 +152,7 @@
         \end{bmatrix}
         \label{eq:ponto_equilibrio}
     \end{equation}
+
 
 \end{frame}
 
@@ -311,55 +284,6 @@
 
     Uma das principais vantagens das estratégias de controle preditivo em relação ao controle clássico é a possilidade de incorporar diretamente restrições no problema de controle. No caso de um conversor chaveado, o sinal de controle (razão cíclica) é restrito fisicamente \(0 \leq u \leq 1\).
 
-    No entanto, a variável otimizada é o incremento de controle, portanto, todas as restrições precisam ser escritas em função do \(\Delta u\).
-
-\end{frame}
-
-\begin{frame}{Restrições implementadas.}
-
-    \justifying
-    Na forma matricial, a restrição no sinal de controle é dada por \eqref{eq:restricao_controle}. \(N_u\). A transformação das restrições é realizada por \eqref{eq:transf_restricao}, em que M é uma matriz triangular inferior, com todos os termos não nulos iguais a 1 e \(\mathbf{1}_{N_u}\) é um vetor pertencente ao \(\mathbb{R}^{N_u}\) com todos os termos iguais a 1.
-
-    \begin{equation} \mathbf{F}_u \vec{u} \leq \mathbf{g}_u \Rightarrow
-        \begin{bmatrix}
-            1      & 0      & \cdots & 0      \\
-            0      & 1      & \cdots & 0      \\
-            \vdots & \vdots & \ddots & \vdots \\
-            0      & 0      & \cdots & 1      \\
-            -1     & 0      & \cdots & 0      \\
-            0      & -1     & \cdots & 0      \\
-            \vdots & \vdots & \ddots & \vdots \\
-            0      & 0      & \cdots & -1
-        \end{bmatrix}
-        \begin{bmatrix}
-            u(k)       \\
-            u(k+1)     \\
-            \vdots     \\
-            u(k+N_u-1) \\
-            u(k)       \\
-            u(k+1)     \\
-            \vdots     \\
-            u(k+N_u-1)
-        \end{bmatrix}
-        \le
-        \begin{bmatrix}
-            1      \\
-            1      \\
-            \vdots \\
-            1      \\
-            0      \\
-            0      \\
-            \vdots \\
-            0
-        \end{bmatrix}
-        \label{eq:restricao_controle}
-    \end{equation}
-
-    \begin{equation}
-        \mathbf{F}_u M \vec{\Delta u} \leq \mathbf{g}_u -\mathbf{F}_u u(k - 1)\cdot \mathbf{1}_{N_u}
-        \label{eq:transf_restricao}
-    \end{equation}
-
 \end{frame}
 
 \begin{frame}{Resultados.}
@@ -368,7 +292,7 @@
         \item Os controladores GPC, DMC e o SSMPC são avaliados tanto no controle do modelo linearizado, quanto no controle da planta não linear em torno do ponto de equilibrio.
         \item Avalia-se o desempenho dos três controladores nas tarefas de seguimento de referência e rejeição de perturbação constante.
         \item Os parâmetros de sintonia utilizados são listados na Tabela \ref{tab:sintonia_controladores}.
-        \item As simulações são executadas num intervalo de 200 amostras, o que implica num intervalo de tempo entre 0 e 8 ms.
+        \item As simulações são executadas num intervalo de 200 ou 400 amostras, o que implica num intervalo de tempo entre 0 e 8 ms (16 ms).
     \end{itemize}
 
     \begin{table}[h]
@@ -515,6 +439,12 @@
         \includegraphics[width=0.65\textwidth]{Figs/Variação N truncamento.pdf}
         \label{fig:variacao_truncamento_dmc}
     \end{figure}
+\end{frame}
+
+%TODO: Colocar variação no horizonte de controle.
+
+\begin{frame}{Conclusões}
+
 \end{frame}
 
 \begin{frame}[allowframebreaks, noframenumbering]

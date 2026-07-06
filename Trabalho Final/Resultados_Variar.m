@@ -36,9 +36,7 @@ build_args_R = @(R_val) { ...
 plot_variacao(run_fns_R, R_valores, legend_R, 1, build_args_R, ...
               controladores, ylabels_subplots, n_ctrl, N_sim, t, ref);
 
-%% =========================================================
-%  2) Variação de N_predicao = N_controle  (R fixo)
-% =========================================================
+%% Variação de N.
 N_valores   = [2, 5, 10, 20, 40];
 legend_N    = arrayfun(@(n) sprintf('N = %d', n), N_valores, 'UniformOutput', false);
 
@@ -100,6 +98,23 @@ for s = 1:3
     box on;
 end
 
+%% Variação de N_predicao.
+N_controle = [2, 5, 10, 20, 40];
+N_predicao = 50;
+legend_N     = arrayfun(@(n) sprintf('N_u = %d', n), N_controle, 'UniformOutput', false);
+
+run_fns_N = { ...
+    @run_gpc_linear, ...
+    @run_dmc_linear, ...
+    @run_ssmpc_linear };
+
+build_args_N = @(N_ctrl_val) { ...
+    {sys_disc, ref, N_predicao, N_ctrl_val, N_sim, Q, R,  USAR_RESTRICOES}, ...
+    {sys_disc, ref, N_predicao, N_ctrl_val, N_sim, N_truncamento, Q, R, USAR_RESTRICOES}, ...
+    {sys_disc, ref, N_predicao, N_ctrl_val, N_sim, Q, R,  USAR_RESTRICOES} };
+
+plot_variacao(run_fns_N, N_controle, legend_N, 8, build_args_N, ...
+              controladores, ylabels_subplots, n_ctrl, N_sim, t, ref);
 
 %% =========================================================
 %  Função auxiliar: executa simulações e plota uma figura
