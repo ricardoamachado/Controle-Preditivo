@@ -412,7 +412,7 @@ Para as tensões nominais definidas no projeto do conversor, a razão cíclica d
     A Figura \ref{fig:variacao_n_dmc} mostra o efeito da variação do parâmetro \(N\) para o DMC.
     \begin{figure}[htb]
         \centering
-        \caption{Efeito da variação da ponderação do esforço de controle no DMC.}
+        \caption{Efeito da variação do horizonte de predição no no DMC.}
         \includegraphics[width=0.65\textwidth]{Figs/Variação N DMC.pdf}
         \label{fig:variacao_n_dmc}
     \end{figure}
@@ -441,11 +441,54 @@ Para as tensões nominais definidas no projeto do conversor, a razão cíclica d
     \end{figure}
 \end{frame}
 
-%TODO: Colocar variação no horizonte de controle.
+\begin{frame}{Resultados - Variação em \(N_u\) - GPC}
+    \justifying
+    A Figura \ref{fig:variacao_nu_gpc} mostra o efeito da variação do parâmetro \(N_u\) para o GPC.
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação do horizonte de controle no GPC.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação Nu GPC.pdf}
+        \label{fig:variacao_nu_gpc}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Resultados - Variação em \(N_u\) - DMC}
+    \justifying
+    A Figura \ref{fig:variacao_nu_dmc} mostra o efeito da variação do parâmetro \(N_u\) para o DMC.
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação do horizonte de controle no DMC.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação Nu DMC.pdf}
+        \label{fig:variacao_nu_dmc}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Resultados - Variação em \(N_u\) - SSMPC}
+    \justifying
+    A Figura \ref{fig:variacao_nu_ssmpc} mostra o efeito da variação do parâmetro \(N_u\) para o SSMPC. Em geral, quanto menor é o valor de \(N_u\), mais lenta é a resposta do sistema.
+
+    \begin{figure}[htb]
+        \centering
+        \caption{Efeito da variação do horizonte de controle no SSMPC.}
+        \includegraphics[width=0.65\textwidth]{Figs/Variação Nu SSMPC.pdf}
+        \label{fig:variacao_nu_ssmpc}
+    \end{figure}
+\end{frame}
 
 \begin{frame}{Conclusões}
-
+    \justifying
+    \begin{itemize}
+        \item O modelo linerizado obtido para o conversor flyback representa bem o comportamento do sistema perto do ponto de equilibrio.
+        \item A incorporação de restrições no controle preditivo, permite que o incremento de controle calculado sempre resulte num \textit{duty cycle} entre 0 e 1, evitando a saturação do sinal de controle e o efeito \textit{wind-up}.
+        \item Reduzir o horizonte de predição diminui o esforço computacional utilizado no controlador preditivo, mas ao mesmo tempo, aumenta as oscilações na saida e diminui a velocidade da resposta.
+        \item Um horizonte de truncamento curto no DMC diminui o número de coeficientes que precisam ser armazenados, entretanto, causa oscilações na resposta, inclusive havendo a possilidade da resposta ser instável.
+    \end{itemize}
 \end{frame}
+
+\nocite{Julio2024}
+\nocite{Maciejowski2001}
+\nocite{Camacho2004}
+\nocite{Wang2009}
 
 \begin{frame}[allowframebreaks, noframenumbering]
     \frametitle{Referências}

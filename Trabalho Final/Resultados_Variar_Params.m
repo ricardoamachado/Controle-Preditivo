@@ -116,18 +116,7 @@ build_args_N = @(N_ctrl_val) { ...
 plot_variacao(run_fns_N, N_controle, legend_N, 8, build_args_N, ...
               controladores, ylabels_subplots, n_ctrl, N_sim, t, ref);
 
-%% =========================================================
-%  Função auxiliar: executa simulações e plota uma figura
-%  por controlador.
-%
-%  run_fn  : cell array com os 3 function handles
-%  param_valores : vetor de valores do parâmetro variado
-%  legend_str    : cell array de strings para a legenda
-%  fig_offset    : offset do índice de figura (1, 4, 7, ...)
-%  build_args_fn : function handle que recebe o valor do
-%                  parâmetro e devolve um cell array de
-%                  argumentos para cada run_fn{c}
-% =========================================================
+%% Função auxiliar para plotagem dos resultados.
 
     function plot_variacao(run_fns, param_valores, legend_str, ...
                            fig_offset, build_args_fn, ...

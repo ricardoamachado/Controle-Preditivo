@@ -257,6 +257,7 @@ As matrizes \(A\) e \(B\) do modelo em espaço de estados linearizado são descr
 
 As matrizes numéricas do modelo em tempo contínuo são descritas por \eqref{eq:matrizes_numericas}. Em seguida, aplica-se a discretização do sistema por meio do retentor de ordem zero (ZOH) para a obtenção do modelo de espaços de estados em tempo discreto (Eqs. \eqref{eq:modelo_disc_ss} e \eqref{eq:matrizes_numericas_disc}). A frequência de amostragem utilizada (\(f_\mathrm{sample} = 25 \text{kHz}\)) é metade da frequência de chaveamento do conversor.
 
+A função de transferência do conversor flyback é dada por \eqref{eq:transf_func}
 
 \begin{equation}
   A =
@@ -294,6 +295,12 @@ As matrizes numéricas do modelo em tempo contínuo são descritas por \eqref{eq
   \label{eq:matrizes_numericas_disc}
 \end{equation}
 
+\begin{equation}
+  \frac{Y(z)}{U(z)}=
+  \frac{-0.7131\,z^{-1} + 2.918\,z^{-2}}
+  {1 - 1.877\,z^{-1} + 0.9231\,z^{-2}}
+  \label{eq:transf_func}
+\end{equation}
 
 \subsection{Validação do modelo linearizado.}
 
@@ -588,13 +595,21 @@ A análise do efeito do horizonte de truncamento no DMC é realizada variando o 
   \label{fig:variacao_truncamento_dmc}
 \end{figure}
 
+\subsection{Efeito da variação do horizonte de predição.}
+
+%TODO: Escrever.
+
 \section{Conclusões.}
+
+O modelo linerizado obtido para o conversor flyback representa bem o comportamento do sistema perto do ponto de equilibrio.
 
 As estratégias de controle preditivo GPC, DMC e SSMPC demonstraram desempenho satisfatório no controle do conversor flyback em modo de condução contínua, tanto no caso do modelo linearizado, quanto no caso do modelo não linear próximo ao ponto de equilibrio.
 
 A incorporação de restrições no controle preditivo, permite que o incremento de controle calculado sempre resulte num \textit{duty cycle} entre 0 e 1, evitando a saturação do sinal de controle e o efeito \textit{wind-up}. Ademais, a ponderação no esforço de controle fornece uma relação de compromisso entre velocidade da resposta e agressividade do controle na sintonia do controlador.
 
-Em relação aos outros parâmetros de sintonia, reduzir o horizonte de predição diminui o esforço computacional utilizado no controlador preditivo, mas ao mesmo tempo, aumenta as oscilações na saida e diminui a velocidade da resposta.Um horizonte de truncamento curto no DMC diminui o número de coeficientes que precisam ser armazenados, entretanto, causa oscilações na resposta, inclusive havendo a possilidade da resposta ser instável.
+Em relação aos outros parâmetros de sintonia, reduzir o horizonte de predição diminui o esforço computacional utilizado no controlador preditivo, mas ao mesmo tempo, aumenta as oscilações na saida e diminui a velocidade da resposta. Um horizonte de truncamento curto no DMC diminui o número de coeficientes que precisam ser armazenados, entretanto, causa oscilações na resposta, inclusive havendo a possilidade da resposta ser instável.
+
+Como sugestões para trabalhos futuros, recomenda-se a avaliação quantitativa das respostas do conversor, com base em medidas de tempo de subida, tempo de acomodação e sobressinal máximo. Estratégias de controle preditivo com garantia de estabilidade são interessantes para garantir que o sistema seja estável em malha fechada, independente dos parâmetros de sintonia utilizados.
 
 \bibliographystyle{unsrt}
 \bibliography{references}
