@@ -44,7 +44,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-  Escrever resumo.
+ Este trabalho aborda a modelagem e o controle de um conversor flyback em modo de condução contínua utilizando estratégias de controle preditivo. A partir do modelo linearizado do conversor, foram projetados três controladores preditivos: o GPC, o DMC e o SSMPC. As simulações demonstraram desempenho satisfatório no seguimento de referências e na rejeição de perturbações, tanto na planta linearizada, quanto no modelo não linear. A incorporação direta das restrições físicas da razão cíclica no problema de controle evitou o efeito wind-up.
 \end{abstract}
 
 
@@ -85,7 +85,7 @@ Notação                      & Nome do parâmetro               & Valor  \\ \h
 \end{tabular}
 \end{table}
 
-A potência de saída desejada é obtida com um resistor de carga de 24 \(\Omega\), conforme à expressão \eqref{eq:r_carga}.
+A potência de saída desejada é obtida com um resistor de carga de 24 \(\Omega\), de acordo com  a expressão \eqref{eq:r_carga}.
 
 \begin{equation}
   R_L = \frac{V_o^2}{P_o}
@@ -152,7 +152,7 @@ As expressões para a tensão média no capacitor e para a corrente média no in
 
 Para as tensões nominais definidas no projeto do conversor, a razão cíclica de equilibrio obtida é \(D = 0,5\). Ademais, os valores médios da tensão no capacitor e da corrente no indutor são, respectivamente, 12 V e 0,25 A.
 
-A capacitância e a indutância do conversor são determinadas com base nas especificações do ripple de tensão e ripple de corrente \cite{Erickson2020}, respectivamente, conforme \eqref{eq:capacitor_flyback} e \eqref{eq:indutor_flyback}. Os valores encontrados são \(C = 20.833\ \mathrm{\mu F}\) e \(L = 6.4\ \mathrm{mH} \)
+A capacitância e a indutância do conversor são determinadas com base nas especificações do ripple de tensão e ripple de corrente \cite{Erickson2020}, respectivamente, conforme \eqref{eq:capacitor_flyback} e \eqref{eq:indutor_flyback}. Os valores encontrados são \(C = 20.833\ \mathrm{\mu F}\) e \(L = 6.4\ \mathrm{mH} \).
 
 \begin{equation}
   C = \frac{D}{Rs f_s \frac{|\Delta v_c|}{V_c}}
@@ -257,7 +257,7 @@ As matrizes \(A\) e \(B\) do modelo em espaço de estados linearizado são descr
 
 As matrizes numéricas do modelo em tempo contínuo são descritas por \eqref{eq:matrizes_numericas}. Em seguida, aplica-se a discretização do sistema por meio do retentor de ordem zero (ZOH) para a obtenção do modelo de espaços de estados em tempo discreto (Eqs. \eqref{eq:modelo_disc_ss} e \eqref{eq:matrizes_numericas_disc}). A frequência de amostragem utilizada (\(f_\mathrm{sample} = 25 \text{kHz}\)) é metade da frequência de chaveamento do conversor.
 
-A função de transferência do conversor flyback é dada por \eqref{eq:transf_func}
+A função de transferência do conversor flyback em tempo discreto é dada por \eqref{eq:transf_func}.
 
 \begin{equation}
   A =
@@ -319,10 +319,25 @@ A Figura \ref{fig:comp_resp_freq} ilustra a comparação entre a simulação de 
 \begin{figure}[htb]
   \centering
   \caption{Comparação entre simulação AC e resposta em frequência do modelo.}
-  \includegraphics[width=0.7\textwidth]{Figs/Valid Modelo.pdf}
+  \includegraphics[width=0.85\textwidth]{Figs/Valid Modelo.pdf}
   \\ \small Fonte: Autoral.
   \label{fig:comp_resp_freq}
 \end{figure}
+
+\subsection{Resposta em malha aberta do modelo linearizado.}
+
+A resposta em malha aberta do modelo linearizado para uma entrada degrau unitário é exibida na Figura \ref{fig:resp_degrau}. O sobressinal máximo é de 56,4 \%. O tempo de acomodação obtido para o critério de 2 \% é de 3,7 ms.
+
+\clearpage
+
+
+\begin{figure}[htb]
+  \centering
+  \caption{Resposta ao degrau em malha aberta.}
+  \includegraphics[width=0.9\textwidth]{Figs/resp_degrau.pdf}
+  \label{fig:resp_degrau}
+\end{figure}
+
 
 \section{Estratégias de controle preditivo utilizadas.}
 
@@ -450,6 +465,7 @@ Na forma matricial, a restrição é dada por \eqref{eq:restricao_controle} para
   \label{eq:transf_restricao}
 \end{equation}
 
+\clearpage
 
 \section{Resultados.}
 
@@ -499,6 +515,7 @@ A Figura \ref{fig:resp_nao_linear} exibe as respostas do modelo não linear do c
   \label{fig:resp_nao_linear}
 \end{figure}
 
+
 \subsection{Análise do controladores sem restrições e com saturação física.}
 
 Para visualizar melhor o efeito da saturação física nos controladores, reduz-se a ponderação do esforço de controle para \(R = 300\) e analisa-se as respostas dos sistemas com e sem restrições. As respostas do sistema com os controladores restritos são exibidas na Figura \ref{fig:resp_com_restricoes}, devido a rejeição de pertubação mais agressiva do GPC, o otimizador encontra valores maiores, em módulo, para o incremento de controle. Entretanto, devido as restrições, os incrementos de controle sempre fazem o \textit{duty cycle} variar no intervalo de 0 e 1. O valor máximo da tensão de saída durante a rejeição de perturbação com o GPC é de 16,87 V.
@@ -521,6 +538,7 @@ No caso da rejeição de perturbação sem restrições, visto na Figura \ref{fi
   \label{fig:resp_sem_restricoes}
 \end{figure}
 
+\clearpage
 
 \subsection{Efeito da variação da ponderação do esforço de controle.}
 
@@ -551,6 +569,8 @@ As Figuras \ref{fig:variacao_r_dmc}, \ref{fig:variacao_r_gpc} e \ref{fig:variaca
   \\ \small Fonte: Autoral.
   \label{fig:variacao_r_ssmpc}
 \end{figure}
+
+
 
 \subsection{Efeito da variação do horizonte de predição.}
 
@@ -595,9 +615,37 @@ A análise do efeito do horizonte de truncamento no DMC é realizada variando o 
   \label{fig:variacao_truncamento_dmc}
 \end{figure}
 
-\subsection{Efeito da variação do horizonte de predição.}
+\subsection{Efeito da variação do horizonte de controle.}
 
-%TODO: Escrever.
+As Figuras \ref{fig:variacao_nu_gpc}, \ref{fig:variacao_nu_dmc} e \ref{fig:variacao_nu_ssmpc} mostram o efeito da variação do horizonte de controle para o GPC, o DMC e o SSMPC, respectivamente. Para o conversor flyback, a redução do \(N_u\) torna a reposta do sistema um pouco mais lenta. Ao mesmo tempo, o sobressinal é reduzido.
+
+Visto que a resposta fica apenas um pouco mais lenta e o sobressinal é reduzido, torna-se interessante trabalhar com um horizonte de controle curto no caso específico do conversor flyback projetado.
+
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação do horizonte de controle no GPC.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação Nu GPC.pdf}
+  \label{fig:variacao_nu_gpc}
+\end{figure}
+
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação do horizonte de controle no DMC.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação Nu DMC.pdf}
+  \label{fig:variacao_nu_dmc}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \caption{Efeito da variação do horizonte de controle no SSMPC.}
+  \includegraphics[width=0.9\textwidth]{Figs/Variação Nu SSMPC.pdf}
+  \label{fig:variacao_nu_ssmpc}
+\end{figure}
+
+\clearpage
+
 
 \section{Conclusões.}
 
@@ -609,7 +657,9 @@ A incorporação de restrições no controle preditivo, permite que o incremento
 
 Em relação aos outros parâmetros de sintonia, reduzir o horizonte de predição diminui o esforço computacional utilizado no controlador preditivo, mas ao mesmo tempo, aumenta as oscilações na saida e diminui a velocidade da resposta. Um horizonte de truncamento curto no DMC diminui o número de coeficientes que precisam ser armazenados, entretanto, causa oscilações na resposta, inclusive havendo a possilidade da resposta ser instável.
 
-Como sugestões para trabalhos futuros, recomenda-se a avaliação quantitativa das respostas do conversor, com base em medidas de tempo de subida, tempo de acomodação e sobressinal máximo. Estratégias de controle preditivo com garantia de estabilidade são interessantes para garantir que o sistema seja estável em malha fechada, independente dos parâmetros de sintonia utilizados.
+Como sugestões para trabalhos futuros, recomenda-se a avaliação quantitativa das respostas do conversor, com base em medidas de tempo de subida, tempo de acomodação e sobressinal máximo.
+Ademais, pode-se avaliar os efeitos da comutação no modelo não linear do conversor.
+Por fim, estratégias de controle preditivo com garantia de estabilidade são interessantes para garantir que o sistema seja estável em malha fechada, independente dos parâmetros de sintonia utilizados.
 
 \bibliographystyle{unsrt}
 \bibliography{references}

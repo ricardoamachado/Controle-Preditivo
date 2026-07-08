@@ -30,7 +30,10 @@ C_ss = [0 1];
 D_ss = 0;
 sys = ss(A_ss,B_ss,C_ss,D_ss);
 
+%Resposta ao degrau em malha aberta.
+step(sys,'b')
+
 % Discretização.
 T_sample = 2/freq;
 sys_disc = c2d(sys,T_sample,'zoh');
-save("sys_disc.mat","sys_disc")
+%save("sys_disc.mat","sys_disc")
